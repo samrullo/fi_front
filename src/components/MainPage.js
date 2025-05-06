@@ -11,7 +11,7 @@ const MainPage = () => {
       <div className="container mt-5">
         <header>
           <LoginWithAccessToken />
-          <NavBar title="Simple Ecommerce" />
+          <NavBar title="FI Analytics" />
           <FlashMessage />
         </header>
         <AppRoutes />

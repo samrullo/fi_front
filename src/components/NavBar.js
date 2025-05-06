@@ -31,32 +31,14 @@ const NavBar = ({ title }) => {
       </button>
       <div className="collapse navbar-collapse" id="mynavigation">
         <div className="navbar-nav ml-auto">
-          <Link to="/products" className="nav-link">
-            Products
+          <Link to="/positions/20250425" className="nav-link">
+            US IG Positions
           </Link>
-          <Link to="/contacts" className="nav-link">
-            Contacts
-          </Link>
+          
           <Link to="/about" className="nav-link">
             About Us
           </Link>
-          {isAuthenticated ? (
-            <>
-              <Logout />
-              <Link to="/profile" className="nav-link">
-                Profile
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="nav-link">
-                Login
-              </Link>
-              <Link to="/register" className="nav-link">
-                Register
-              </Link>
-            </>
-          )}
+          
         </div>
       </div>
     </nav>

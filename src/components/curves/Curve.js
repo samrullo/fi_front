@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import DataTable from "../GenericDataComponents/DataTable";
 import { fetchResource } from "../ApiUtils/fetch_data";
-import { CURVES_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import { CURVEPOINTS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
 
 const Curve = () => {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const Curve = () => {
   useEffect(() => {
     const getCurves = async () => {
       try {
-        const data = await fetchResource(CURVES_ENDPOINT, "curves");
+        const data = await fetchResource(CURVEPOINTS_ENDPOINT, "curve-points");
         setCurves(data);
       } catch (error) {
         console.log(`Error while fetching curves: ${error}`);

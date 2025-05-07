@@ -23,6 +23,7 @@ import StressScenario from "./stress_scenarios/StressScenario";
 import StressScenarioNew from "./stress_scenarios/StressScenarioNew";
 import StressScenarioEdit from "./stress_scenarios/StressScenarioEdit";
 import UploadStressScenarioCSV from "./stress_scenarios/UploadStressScenarioCSV";
+import CurveByDateSelector from "./curves/CurveByDateSelector";
 
 const AppRoutes = () => {
   return (
@@ -39,6 +40,7 @@ const AppRoutes = () => {
         </Route>
         <Route path="/curves/by-date/:curveName/:adate" element={<CurvesByDate />} />
         <Route path="/curves/bulk" element={<UploadCurveCSV />} />
+        <Route path="/curves-by-date" element={<CurveByDateSelector />} />
         <Route path="/stress-scenarios" element={<StressScenario />}>
           <Route path="new" element={<StressScenarioNew />} />
           <Route path="edit/:scenarioId" element={<StressScenarioEdit />} />

@@ -10,4 +10,5 @@ export const PRODUCTS_ENDPOINT = `${API_HOSTNAME}/ecommerce/v1/ecommerce/product
 
 export const USIG_DATA_ENDPOINT = `${API_HOSTNAME}/usig_data/`;
 export const CURVES_ENDPOINT = `${API_HOSTNAME}/fi/v1/curves/`;
+export const CURVEPOINTS_ENDPOINT = `${API_HOSTNAME}/fi/v1/curve-points/`;
 export const STRESS_SCENARIOS_ENDPOINT = `${API_HOSTNAME}/fi/v1/stress-scenarios/`;

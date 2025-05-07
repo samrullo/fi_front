@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import GenericEditData from "../GenericDataComponents/GenericEditData";
-import { CURVES_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import { CURVEPOINTS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
 
 const CurveEdit = () => {
   const navigate = useNavigate();
   const { curveId } = useParams();
 
+  const [curveNameId, setCurveNameId] = useState(null);
   const [curveName, setCurveName] = useState("");
   const [adate, setAdate] = useState("");
   const [year, setYear] = useState(1);
@@ -15,9 +16,10 @@ const CurveEdit = () => {
   useEffect(() => {
     const fetchCurve = async () => {
       try {
-        const res = await fetch(`${CURVES_ENDPOINT}${curveId}/`);
+        const res = await fetch(`${CURVEPOINTS_ENDPOINT}${curveId}/`);
         if (!res.ok) throw new Error("Curve not found");
         const data = await res.json();
+        setCurveNameId(data.curve);
         setCurveName(data.curve_name);
         setAdate(data.adate);
         setYear(data.year);
@@ -35,11 +37,11 @@ const CurveEdit = () => {
   const handleEdit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${CURVES_ENDPOINT}${curveId}/`, {
+      const res = await fetch(`${CURVEPOINTS_ENDPOINT}${curveId}/`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          curve_name: curveName,
+          curve: curveNameId,
           adate,
           year,
           rate,
@@ -60,7 +62,7 @@ const CurveEdit = () => {
 
   const handleDelete = async () => {
     try {
-      const res = await fetch(`${CURVES_ENDPOINT}${curveId}/`, {
+      const res = await fetch(`${CURVEPOINTS_ENDPOINT}${curveId}/`, {
         method: "DELETE",
       });
 

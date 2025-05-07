@@ -13,6 +13,7 @@ const Dashboard = () => {
       <h2>Curves</h2>
       <div className="list-group">
         <Link to="/curves" className="list-group-item">View Curves</Link>
+        <Link to="/curves-by-date" className="list-group-item">Curves by date and name</Link>
         <Link to="/curves/new" className="list-group-item">Add New Curve</Link>
         <Link to="/curves/bulk" className="list-group-item">Add Curve in bulk</Link>
       </div>

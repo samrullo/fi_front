@@ -38,8 +38,8 @@ const ScenarioPositionEdit = () => {
 
       setFormData({
         ...positionData,
-        scenario: selectedScenario ? { value: selectedScenario.id, label: selectedScenario.scenario_details?.name || selectedScenario.id } : null,
-        security: selectedBond ? { value: selectedBond.id, label: selectedBond.identifier_client } : null,
+        scenario_id: selectedScenario ? { value: selectedScenario.id, label: selectedScenario.scenario_details?.name || selectedScenario.id } : null,
+        security_id: selectedBond ? { value: selectedBond.id, label: selectedBond.identifier_client } : null,
       });
     };
 
@@ -54,8 +54,8 @@ const ScenarioPositionEdit = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          scenario_id: formData.scenario.value,
-          security: formData.security.value,
+          scenario_id: formData.scenario_id.value,
+          security_id: formData.security_id.value,
         }),
       });
       if (!res.ok) throw new Error("Failed to update scenario position");
@@ -91,18 +91,18 @@ const ScenarioPositionEdit = () => {
     {
       fieldType: "select",
       fieldLabel: "Scenario",
-      fieldValue: formData.scenario,
-      setFieldValue: (v) => setFormData({ ...formData, scenario: v }),
+      fieldValue: formData.scenario_id,
+      setFieldValue: (v) => setFormData({ ...formData, scenario_id: v }),
       selectOptions: scenarios.map((s) => ({
         value: s.id,
-        label: s.scenario_details?.name || `Scenario ${s.id}`,
+        label: `${s.scenario_details?.name} period ${s.period_number} simulation ${s.simulation_number} curve ${s.curve_details?.curve_name?.name} adate ${s.curve_details?.adate} year ${s.curve_details?.year} shock ${s.parallel_shock_size}` || `Scenario ${s.id}`,
       })),
     },
     {
       fieldType: "select",
-      fieldLabel: "Bond",
-      fieldValue: formData.security,
-      setFieldValue: (v) => setFormData({ ...formData, security: v }),
+      fieldLabel: "Security",
+      fieldValue: formData.security_id,
+      setFieldValue: (v) => setFormData({ ...formData, security_id: v }),
       selectOptions: bonds.map((b) => ({
         value: b.id,
         label: b.identifier_client,

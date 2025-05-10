@@ -3,9 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import GenericEditData from "../GenericDataComponents/GenericEditData";
 import { CURVEPOINTS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
 
-const CurveEdit = () => {
+const CurvePointEdit = () => {
   const navigate = useNavigate();
-  const { curveId } = useParams();
+  const { curvePointId } = useParams();
 
   const [curveNameId, setCurveNameId] = useState(null);
   const [curveName, setCurveName] = useState("");
@@ -16,8 +16,8 @@ const CurveEdit = () => {
   useEffect(() => {
     const fetchCurve = async () => {
       try {
-        const res = await fetch(`${CURVEPOINTS_ENDPOINT}${curveId}/`);
-        if (!res.ok) throw new Error("Curve not found");
+        const res = await fetch(`${CURVEPOINTS_ENDPOINT}${curvePointId}/`);
+        if (!res.ok) throw new Error("Curve point not found");
         const data = await res.json();
         setCurveNameId(data.curve);
         setCurveName(data.curve_name);
@@ -26,18 +26,18 @@ const CurveEdit = () => {
         setRate(data.rate);
       } catch (err) {
         console.error(err);
-        alert("Failed to fetch curve data");
-        navigate("/curves");
+        alert("Failed to fetch curve point data");
+        navigate("/curve-points");
       }
     };
 
     fetchCurve();
-  }, [curveId, navigate]);
+  }, [curvePointId, navigate]);
 
   const handleEdit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${CURVEPOINTS_ENDPOINT}${curveId}/`, {
+      const res = await fetch(`${CURVEPOINTS_ENDPOINT}${curvePointId}/`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -50,7 +50,7 @@ const CurveEdit = () => {
 
       if (!res.ok) throw new Error("Failed to update");
 
-      navigate("/curves", {
+      navigate("/curve-points", {
         replace: true,
         state: { timestamp: new Date().getTime() },
       });
@@ -62,13 +62,13 @@ const CurveEdit = () => {
 
   const handleDelete = async () => {
     try {
-      const res = await fetch(`${CURVEPOINTS_ENDPOINT}${curveId}/`, {
+      const res = await fetch(`${CURVEPOINTS_ENDPOINT}${curvePointId}/`, {
         method: "DELETE",
       });
 
       if (!res.ok) throw new Error("Failed to delete");
 
-      navigate("/curves", {
+      navigate("/curve-points", {
         replace: true,
         state: { timestamp: new Date().getTime() },
       });
@@ -107,7 +107,7 @@ const CurveEdit = () => {
 
   return (
     <GenericEditData
-      title={`Edit Curve ID ${curveId}`}
+      title={`Edit Curve Point ID ${curvePointId}`}
       formFields={formFields}
       handleEdit={handleEdit}
       handleDelete={handleDelete}
@@ -115,4 +115,4 @@ const CurveEdit = () => {
   );
 };
 
-export default CurveEdit;
+export default CurvePointEdit;

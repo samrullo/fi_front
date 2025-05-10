@@ -16,16 +16,16 @@ const StressScenario = () => {
       try {
         const data = await fetchResource(STRESS_SCENARIOS_ENDPOINT, "stress-scenarios");
 
-        // Flatten nested curve_details while keeping curve FK
         const flattened = data.map((item) => {
           const curve = item.curve_details || {};
+          const scenario = item.scenario_details || {};
+
           return {
             ...item,
-            curve_id: item.curve, // preserve FK
-            curve_name: curve.curve_name || "",
-            adate: curve.adate || "",
-            year: curve.year || "",
-            rate: curve.rate || "",
+            scenario_name: scenario.name || "",
+            curve_name: curve.curve_name.name || "",
+            curve_adate: curve.adate || "",
+            curve_year: curve.year || "",
           };
         });
 
@@ -59,7 +59,7 @@ const StressScenario = () => {
       ) : (
         <DataTable
           data={scenarios}
-          hiddenColumns={["id", "curve", "curve_details"]}
+          hiddenColumns={["id", "curve", "scenario", "curve_details", "scenario_details"]}
           width_pct={100}
           onRowClick={handleRowClick}
         />

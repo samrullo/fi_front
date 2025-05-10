@@ -2,21 +2,23 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import * as d3 from "d3";
 import DataTable from "../GenericDataComponents/DataTable";
-import { API_HOSTNAME } from "../ApiUtils/ApiEndpoints";
+import { API_HOSTNAME, CURVEPOINTS_BY_DATE_ENDPOINT } from "../ApiUtils/ApiEndpoints";
 
-const CurvesByDate = () => {
+const CurvePointsByDate = () => {
   const { curveName, adate } = useParams();
-  const [curves, setCurves] = useState([]);
+  const [curvePoints, setCurvePoints] = useState([]);
   const [loading, setLoading] = useState(true);
   const chartRef = useRef(null);
 
   useEffect(() => {
-    const fetchFilteredCurve = async () => {
+    const fetchFilteredCurvePoints = async () => {
       try {
-        const res = await fetch(`${API_HOSTNAME}/fi/v1/curves/by-date/${curveName}/${adate}/`);
-        if (!res.ok) throw new Error("Failed to fetch curve");
+        const res = await fetch(
+          `${CURVEPOINTS_BY_DATE_ENDPOINT(curveName,adate)}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch curve points");
         const data = await res.json();
-        setCurves(data);
+        setCurvePoints(data);
       } catch (err) {
         alert("Error: " + err.message);
       } finally {
@@ -24,16 +26,14 @@ const CurvesByDate = () => {
       }
     };
 
-    fetchFilteredCurve();
+    fetchFilteredCurvePoints();
   }, [curveName, adate]);
 
   useEffect(() => {
-    if (!curves.length) return;
+    if (!curvePoints.length) return;
 
-    // Clear previous chart
     d3.select(chartRef.current).selectAll("*").remove();
 
-    // Set dimensions
     const margin = { top: 30, right: 30, bottom: 40, left: 50 };
     const width = 700 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
@@ -46,10 +46,9 @@ const CurvesByDate = () => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // X scale (year)
     const x = d3
       .scaleLinear()
-      .domain(d3.extent(curves, (d) => d.year))
+      .domain(d3.extent(curvePoints, (d) => d.year))
       .range([0, width]);
 
     svg
@@ -57,41 +56,36 @@ const CurvesByDate = () => {
       .attr("transform", `translate(0, ${height})`)
       .call(d3.axisBottom(x).ticks(10));
 
-    // Y scale (rate)
     const y = d3
       .scaleLinear()
-      .domain([0, d3.max(curves, (d) => d.rate) * 1.1])
+      .domain([0, d3.max(curvePoints, (d) => d.rate) * 1.1])
       .range([height, 0]);
 
     svg.append("g").call(d3.axisLeft(y));
 
-    // Line generator
     const line = d3
       .line()
       .x((d) => x(d.year))
       .y((d) => y(d.rate));
 
-    // Draw line
     svg
       .append("path")
-      .datum(curves)
+      .datum(curvePoints)
       .attr("fill", "none")
       .attr("stroke", "#007bff")
       .attr("stroke-width", 2.5)
       .attr("d", line);
 
-    // Dots
     svg
       .selectAll("circle")
-      .data(curves)
+      .data(curvePoints)
       .enter()
       .append("circle")
       .attr("cx", (d) => x(d.year))
       .attr("cy", (d) => y(d.rate))
       .attr("r", 4)
       .attr("fill", "#007bff");
-
-  }, [curves]);
+  }, [curvePoints]);
 
   return (
     <div className="container mt-4">
@@ -100,11 +94,11 @@ const CurvesByDate = () => {
       </h2>
       {loading ? (
         <p>Loading...</p>
-      ) : curves.length === 0 ? (
-        <p>No data found for this curve and date.</p>
+      ) : curvePoints.length === 0 ? (
+        <p>No curve points found for this curve and date.</p>
       ) : (
         <>
-          <DataTable data={curves} hiddenColumns={["id"]} width_pct={100} />
+          <DataTable data={curvePoints} hiddenColumns={["id"]} width_pct={100} />
           <h4 className="mt-5">Yield Curve Chart</h4>
           <div ref={chartRef}></div>
         </>
@@ -113,4 +107,4 @@ const CurvesByDate = () => {
   );
 };
 
-export default CurvesByDate;
+export default CurvePointsByDate;

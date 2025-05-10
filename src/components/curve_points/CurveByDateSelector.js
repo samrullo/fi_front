@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CURVES_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import { CURVES_DESCRIPTIONS_ENDPOINT, API_HOSTNAME, CURVEPOINTS_BY_DATE_ENDPOINT } from "../ApiUtils/ApiEndpoints";
 
 const CurveByDateSelector = () => {
   const [curveName, setCurveName] = useState("");
@@ -11,11 +11,11 @@ const CurveByDateSelector = () => {
   useEffect(() => {
     const fetchCurves = async () => {
       try {
-        const res = await fetch(CURVES_ENDPOINT);
+        const res = await fetch(CURVES_DESCRIPTIONS_ENDPOINT);
         if (!res.ok) throw new Error("Failed to fetch curves");
         const data = await res.json();
 
-        const uniqueNames = [...new Set(data.map(c => c.curve_name))];
+        const uniqueNames = [...new Set(data.map((c) => c.name))];
         setAvailableCurves(uniqueNames);
         if (uniqueNames.length > 0) setCurveName(uniqueNames[0]);
       } catch (err) {
@@ -32,7 +32,36 @@ const CurveByDateSelector = () => {
       alert("Please select both curve name and date.");
       return;
     }
-    navigate(`/curves/by-date/${curveName}/${adate}`);
+    navigate(`/curve-points/by-date/${curveName}/${adate}`);
+  };
+
+  const handleDownload = async () => {
+    if (!curveName || !adate) {
+      alert("Please select both curve name and date.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_HOSTNAME}/fi/v1/curves/by-date/${curveName}/${adate}/`);
+      if (!res.ok) throw new Error("Failed to fetch curve data");
+      const data = await res.json();
+
+      const header = ["curve_name", "adate", "year", "rate"];
+      const rows = data.map((c) => [c.curve_name, c.adate, c.year, c.rate]);
+
+      const csvContent = [header, ...rows].map(r => r.join(",")).join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `curve_${curveName}_${adate}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      alert("Error downloading curve CSV: " + err.message);
+    }
   };
 
   return (
@@ -64,8 +93,9 @@ const CurveByDateSelector = () => {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary">
-          Go to Curve
+        <button type="submit" className="btn btn-primary me-2">Go to Curve</button>
+        <button type="button" className="btn btn-success" onClick={handleDownload}>
+          Download CSV
         </button>
       </form>
     </div>

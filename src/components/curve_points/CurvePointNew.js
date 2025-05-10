@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericNewData from "../GenericDataComponents/GenericNewData";
-import { CURVES_ENDPOINT, CURVEPOINTS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import { CURVES_DESCRIPTIONS_ENDPOINT, CURVEPOINTS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
 
-const CurveNew = () => {
+const CurvePointNew = () => {
   const navigate = useNavigate();
 
   const [curveList, setCurveList] = useState([]);
@@ -15,11 +15,11 @@ const CurveNew = () => {
   useEffect(() => {
     const fetchCurves = async () => {
       try {
-        const res = await fetch(CURVES_ENDPOINT);
+        const res = await fetch(CURVES_DESCRIPTIONS_ENDPOINT);
         if (!res.ok) throw new Error("Failed to fetch curves");
         const data = await res.json();
         setCurveList(data);
-        if (data.length > 0) setSelectedCurve(data[0].id);
+        if (data.length > 0) setSelectedCurve({ value: data[0].id, label: data[0].curve_name });
       } catch (err) {
         alert("Error loading curve names: " + err.message);
       }
@@ -30,7 +30,7 @@ const CurveNew = () => {
 
   const handleNewData = async (e) => {
     e.preventDefault();
-    console.log(`selectedCurve is ${JSON.stringify(selectedCurve)}`)
+    console.log(`selectedCurve is ${JSON.stringify(selectedCurve)}`);
 
     try {
       const res = await fetch(CURVEPOINTS_ENDPOINT, {
@@ -46,7 +46,7 @@ const CurveNew = () => {
 
       if (!res.ok) throw new Error("Failed to create curve point");
 
-      navigate("/curves", {
+      navigate("/curve-points", {
         replace: true,
         state: { timestamp: new Date().getTime() },
       });
@@ -95,4 +95,4 @@ const CurveNew = () => {
   );
 };
 
-export default CurveNew;
+export default CurvePointNew;

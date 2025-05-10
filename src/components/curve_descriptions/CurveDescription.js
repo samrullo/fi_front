@@ -1,31 +1,32 @@
+// CurveDescription.js
 import React, { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import DataTable from "../GenericDataComponents/DataTable";
 import { fetchResource } from "../ApiUtils/fetch_data";
-import { CURVEPOINTS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import { CURVES_DESCRIPTIONS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
 
-const Curve = () => {
+const CurveDescription = () => {
   const navigate = useNavigate();
   const { state = {} } = useLocation();
   const { timestamp } = state ?? {};
-  const [curves, setCurves] = useState([]);
+  const [curveDescriptions, setCurveDescriptions] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
 
   useEffect(() => {
-    const getCurves = async () => {
+    const getDescriptions = async () => {
       try {
-        const data = await fetchResource(CURVEPOINTS_ENDPOINT, "curve-points");
-        setCurves(data);
+        const data = await fetchResource(CURVES_DESCRIPTIONS_ENDPOINT, "curve-descriptions");
+        setCurveDescriptions(data);
       } catch (error) {
-        console.log(`Error while fetching curves: ${error}`);
+        console.log(`Error while fetching curve descriptions: ${error}`);
       }
     };
-    getCurves();
+    getDescriptions();
   }, [timestamp]);
 
   useEffect(() => {
     if (selectedRowData) {
-      navigate(`/curves/edit/${selectedRowData.id}`);
+      navigate(`/curve-descriptions/edit/${selectedRowData.id}`);
     }
   }, [selectedRowData]);
 
@@ -35,14 +36,16 @@ const Curve = () => {
 
   return (
     <>
-      <h1>Curves</h1>
-      <Link className="btn btn-primary" to="/curves/new">New</Link>
+      <h1>Curve Descriptions</h1>
+      <Link className="btn btn-primary" to="/curve-descriptions/new">
+        New
+      </Link>
       <Outlet />
-      {curves.length === 0 ? (
-        <p>No curves defined yet</p>
+      {curveDescriptions.length === 0 ? (
+        <p>No curve descriptions found</p>
       ) : (
         <DataTable
-          data={curves}
+          data={curveDescriptions}
           hiddenColumns={["id"]}
           width_pct={100}
           onRowClick={handleRowClick}
@@ -52,4 +55,4 @@ const Curve = () => {
   );
 };
 
-export default Curve;
+export default CurveDescription;

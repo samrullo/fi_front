@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-function UploadCurveCSV() {
+function UploadCurvePointsCSV() {
   const [file, setFile] = useState(null);
 
   const handleUpload = async () => {
@@ -17,7 +17,7 @@ function UploadCurveCSV() {
       const res = await axios.post("http://localhost:8000/fi/v1/upload-curve/", formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
-      alert("Upload successful");
+      alert(`Upload successful: ${res.data.points} points uploaded`);
     } catch (err) {
       alert("Error uploading: " + (err.response?.data?.error || err.message));
     }
@@ -25,13 +25,13 @@ function UploadCurveCSV() {
 
   return (
     <div className="container mt-4">
-      <h2>Upload Curve CSV</h2>
+      <h2>Upload Curve Points CSV</h2>
       <div className="mb-3">
-        <label htmlFor="curveFile" className="form-label">Select CSV File</label>
+        <label htmlFor="curvePointsFile" className="form-label">Select CSV File</label>
         <input
           type="file"
           className="form-control"
-          id="curveFile"
+          id="curvePointsFile"
           accept=".csv"
           onChange={(e) => setFile(e.target.files[0])}
         />
@@ -43,4 +43,4 @@ function UploadCurveCSV() {
   );
 }
 
-export default UploadCurveCSV;
+export default UploadCurvePointsCSV;

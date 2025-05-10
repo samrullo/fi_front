@@ -8,49 +8,72 @@ import Contact from "./contacts/Contact";
 import ContactNew from "./contacts/ContactNew";
 import ContactEdit from "./contacts/ContactEdit";
 import AboutUs from "./AboutUs";
-import Login from "./user_management/Login"
+import Login from "./user_management/Login";
 import Register from "./user_management/Register";
 import EmailNotVerified from "./user_management/EmailNotVerified";
 import Profile from "./user_management/Profile";
 import Position from "./positions/Position";
 import UploadPositions from "./positions/UploadPositions";
-import Curve from "./curves/Curve";
-import CurveNew from "./curves/CurveNew";
-import CurveEdit from "./curves/CurveEdit";
-import UploadCurveCSV from "./curves/UploadCurveCSV";
-import CurvesByDate from "./curves/CurvesByDate";
+
+import CurvePoint from "./curve_points/CurvePoint";
+import CurvePointNew from "./curve_points/CurvePointNew";
+import CurvePointEdit from "./curve_points/CurvePointEdit";
+import UploadCurvePointsCSV from "./curve_points/UploadCurvePointsCSV";
+import CurvesByDate from "./curve_points/CurvePointsByDate";
+import CurveByDateSelector from "./curve_points/CurveByDateSelector";
+
 import StressScenario from "./stress_scenarios/StressScenario";
 import StressScenarioNew from "./stress_scenarios/StressScenarioNew";
 import StressScenarioEdit from "./stress_scenarios/StressScenarioEdit";
 import UploadStressScenarioCSV from "./stress_scenarios/UploadStressScenarioCSV";
-import CurveByDateSelector from "./curves/CurveByDateSelector";
+
+import StressScenarioDescription from "./stress_scenario_descriptions/StressScenarioDescription";
+import StressScenarioDescriptionNew from "./stress_scenario_descriptions/StressScenarioDescriptionNew";
+import StressScenarioDescriptionEdit from "./stress_scenario_descriptions/StressScenarioDescriptionEdit";
+
+import CurveDescription from "./curve_descriptions/CurveDescription";
+import CurveDescriptionNew from "./curve_descriptions/CurveDescriptionNew";
+import CurveDescriptionEdit from "./curve_descriptions/CurveDescriptionEdit";
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Outlet />}>
         <Route index element={<Dashboard />} />
+
         <Route path="/products" element={<Product />}>
           <Route path="new" element={<ProductNew />} />
           <Route path="edit/:productId" element={<ProductEdit />} />
         </Route>
-        <Route path="/curves" element={<Curve />}>
-          <Route path="new" element={<CurveNew />} />
-          <Route path="edit/:curveId" element={<CurveEdit />} />
+        <Route path="/curve-descriptions" element={<CurveDescription />}>
+          <Route path="new" element={<CurveDescriptionNew />} />
+          <Route path="edit/:descriptionId" element={<CurveDescriptionEdit />} />
         </Route>
-        <Route path="/curves/by-date/:curveName/:adate" element={<CurvesByDate />} />
-        <Route path="/curves/bulk" element={<UploadCurveCSV />} />
+        <Route path="/curve-points" element={<CurvePoint />}>
+          <Route path="new" element={<CurvePointNew />} />
+          <Route path="edit/:curvePointId" element={<CurvePointEdit />} />
+        </Route>
+        <Route path="/curve-points/by-date/:curveName/:adate" element={<CurvesByDate />} />
+        <Route path="/curve-points/bulk" element={<UploadCurvePointsCSV />} />
         <Route path="/curves-by-date" element={<CurveByDateSelector />} />
+
+        <Route path="/stress-scenario-descriptions" element={<StressScenarioDescription />}>
+          <Route path="new" element={<StressScenarioDescriptionNew />} />
+          <Route path="edit/:descriptionId" element={<StressScenarioDescriptionEdit />} />
+        </Route>
+
         <Route path="/stress-scenarios" element={<StressScenario />}>
           <Route path="new" element={<StressScenarioNew />} />
           <Route path="edit/:scenarioId" element={<StressScenarioEdit />} />
         </Route>
         <Route path="/upload-stress-scenarios" element={<UploadStressScenarioCSV />} />
+
         <Route path="/contacts" element={<Contact />}>
           <Route path="new" element={<ContactNew />} />
           <Route path="edit/:contactId" element={<ContactEdit />} />
         </Route>
       </Route>
+
       <Route path="/about" element={<AboutUs />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />

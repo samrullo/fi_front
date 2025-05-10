@@ -24,3 +24,13 @@ export const STRESS_SCENARIOS_ENDPOINT = `${API_HOSTNAME}/fi/v1/stress-scenarios
 export const STRESS_SCENARIOS_UPLOAD_ENDPOINT = `${API_HOSTNAME}/fi/v1/upload-stress-scenarios/`;
 
 export const STRESS_SCENARIO_DESCRIPTIONS_ENDPOINT = `${API_HOSTNAME}/fi/v1/stress-scenario-descriptions/`;
+
+
+export const VANILLA_BONDS_ENDPOINT = `${API_HOSTNAME}/fi/v1/vanilla-bonds/`;
+export const RISK_CORES_ENDPOINT = `${API_HOSTNAME}/fi/v1/risk-cores/`;
+export const RISK_CORES_UPLOAD_ENDPOINT = `${API_HOSTNAME}/fi/v1/upload-calc-risk-cores/`;
+export const RISK_SCENARIOS_ENDPOINT = `${API_HOSTNAME}/fi/v1/risk-scenarios/`;
+export const POSITIONS_ENDPOINT = `${API_HOSTNAME}/fi/v1/positions/`;
+export const SCENARIO_POSITIONS_ENDPOINT = `${API_HOSTNAME}/fi/v1/scenario-positions/`;
+export const TRANSACTIONS_ENDPOINT = `${API_HOSTNAME}/fi/v1/transactions/`;
+export const ABOR_PNL_ENDPOINT = `${API_HOSTNAME}/fi/v1/aborpnls/`;

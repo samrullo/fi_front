@@ -35,6 +35,15 @@ import CurveDescription from "./curve_descriptions/CurveDescription";
 import CurveDescriptionNew from "./curve_descriptions/CurveDescriptionNew";
 import CurveDescriptionEdit from "./curve_descriptions/CurveDescriptionEdit";
 
+import VanillaBond from "./vanilla_bonds/VanillaBond";
+import VanillaBondNew from "./vanilla_bonds/VanillaBondNew";
+import VanillaBondEdit from "./vanilla_bonds/VanillaBondEdit";
+import UploadVanillaBondsCSV from "./vanilla_bonds/UploadVanillaBondsCSV";
+import RiskCore from "./risk_cores/RiskCore";
+import RiskCoreNew from "./risk_cores/RiskCoreNew";
+import RiskCoreEdit from "./risk_cores/RiskCoreEdit";
+import UploadRiskCoreCSV from "./risk_cores/UploadRiskCoreCSV";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -45,10 +54,24 @@ const AppRoutes = () => {
           <Route path="new" element={<ProductNew />} />
           <Route path="edit/:productId" element={<ProductEdit />} />
         </Route>
+        <Route path="/vanilla-bonds" element={<VanillaBond />}>
+          <Route path="new" element={<VanillaBondNew />} />
+          <Route path="edit/:bondId" element={<VanillaBondEdit />} />
+        </Route>
+        <Route path="/upload-vanilla-bonds" element={<UploadVanillaBondsCSV />} />
+
+        <Route path="/risk-cores" element={<RiskCore />}>
+          <Route path="new" element={<RiskCoreNew />} />
+          <Route path="edit/:riskCoreId" element={<RiskCoreEdit />} />
+        </Route>
+        <Route path="/upload-risk-cores" element={<UploadRiskCoreCSV />} />
+
+
         <Route path="/curve-descriptions" element={<CurveDescription />}>
           <Route path="new" element={<CurveDescriptionNew />} />
           <Route path="edit/:descriptionId" element={<CurveDescriptionEdit />} />
         </Route>
+
         <Route path="/curve-points" element={<CurvePoint />}>
           <Route path="new" element={<CurvePointNew />} />
           <Route path="edit/:curvePointId" element={<CurvePointEdit />} />

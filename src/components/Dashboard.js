@@ -14,6 +14,32 @@ const Dashboard = () => {
         </Link>
       </div>
 
+      <h2>Vanilla Bond SecMaster</h2>
+      <div className="list-group">
+        <Link to="/vanilla-bonds" className="list-group-item">
+          View Bonds
+        </Link>
+        <Link to="/vanilla-bonds/new" className="list-group-item">
+          Add New Bond
+        </Link>
+        <Link to="/upload-vanilla-bonds" className="list-group-item">
+          Upload Vanilla Bonds from CSV
+        </Link>
+      </div>
+
+      <h2>Risk Core Analytics</h2>
+      <div className="list-group">
+        <Link to="/risk-cores" className="list-group-item">
+          View Risk Core Data
+        </Link>
+        <Link to="/risk-cores/new" className="list-group-item">
+          Add New Risk Core Record
+        </Link>
+        <Link to="/upload-risk-cores" className="list-group-item">
+          Upload Risk Cores from CSV
+        </Link>
+      </div>
+
       <h2>Curve Descriptions</h2>
       <div className="list-group">
         <Link to="/curve-descriptions" className="list-group-item">

@@ -5,12 +5,30 @@ const Dashboard = () => {
   return (
     <>
       <h1>Dashboard</h1>
+
+      <h2>Positions</h2>
       <div className="list-group">
-        <Link to="/positions/20250425" className="list-group-item">
-          US IG Positions
+        <Link to="/positions" className="list-group-item">
+          View Positions
+        </Link>
+        <Link to="/positions/new" className="list-group-item">
+          Add New Position
         </Link>
         <Link to="/upload_positions" className="list-group-item">
-          Upload Positions
+          Upload Positions from CSV
+        </Link>
+      </div>
+
+      <h2>Scenario Positions</h2>
+      <div className="list-group">
+        <Link to="/scenario-positions" className="list-group-item">
+          View Scenario Positions
+        </Link>
+        <Link to="/scenario-positions/new" className="list-group-item">
+          Add New Scenario Position
+        </Link>
+        <Link to="/upload-scenario-positions" className="list-group-item">
+          Upload Scenario Positions from CSV
         </Link>
       </div>
 

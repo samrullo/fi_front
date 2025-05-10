@@ -12,8 +12,6 @@ import Login from "./user_management/Login";
 import Register from "./user_management/Register";
 import EmailNotVerified from "./user_management/EmailNotVerified";
 import Profile from "./user_management/Profile";
-import Position from "./positions/Position";
-import UploadPositions from "./positions/UploadPositions";
 
 import CurvePoint from "./curve_points/CurvePoint";
 import CurvePointNew from "./curve_points/CurvePointNew";
@@ -44,6 +42,16 @@ import RiskCoreNew from "./risk_cores/RiskCoreNew";
 import RiskCoreEdit from "./risk_cores/RiskCoreEdit";
 import UploadRiskCoreCSV from "./risk_cores/UploadRiskCoreCSV";
 
+import Position from "./positions/Position";
+import PositionNew from "./positions/PositionNew";
+import PositionEdit from "./positions/PositionEdit";
+
+import ScenarioPosition from "./scenario_positions/ScenarioPosition";
+import ScenarioPositionNew from "./scenario_positions/ScenarioPositionNew";
+import ScenarioPositionEdit from "./scenario_positions/ScenarioPositionEdit";
+
+
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -59,6 +67,14 @@ const AppRoutes = () => {
           <Route path="edit/:bondId" element={<VanillaBondEdit />} />
         </Route>
         <Route path="/upload-vanilla-bonds" element={<UploadVanillaBondsCSV />} />
+        <Route path="/positions" element={<Position />}>
+          <Route path="new" element={<PositionNew />} />
+          <Route path="edit/:positionId" element={<PositionEdit />} />
+        </Route>
+        <Route path="/scenario-positions" element={<ScenarioPosition />}>
+          <Route path="new" element={<ScenarioPositionNew />} />
+          <Route path="edit/:scenarioPositionId" element={<ScenarioPositionEdit />} />
+        </Route>
 
         <Route path="/risk-cores" element={<RiskCore />}>
           <Route path="new" element={<RiskCoreNew />} />
@@ -102,8 +118,6 @@ const AppRoutes = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/email_unverified" element={<EmailNotVerified />} />
       <Route path="/profile" element={<Profile />} />
-      <Route path="/positions/:adate" element={<Position />} />
-      <Route path="/upload_positions" element={<UploadPositions />} />
     </Routes>
   );
 };

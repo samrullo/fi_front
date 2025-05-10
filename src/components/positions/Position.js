@@ -1,50 +1,57 @@
-import React from "react";
-import axios from "axios";
-import { useEffect, useState, useContext } from "react";
-import { Link, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import DataTable from "../GenericDataComponents/DataTable";
-import AppContext from "../../AppContext";
 import { fetchResource } from "../ApiUtils/fetch_data";
-import { USIG_DATA_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import { POSITIONS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
 
 const Position = () => {
   const navigate = useNavigate();
-  const {adate} = useParams();
-  let { state = {} } = useLocation();
-  let { timestamp } = state ?? {};
+  const { state = {} } = useLocation();
+  const { timestamp } = state ?? {};
   const [positions, setPositions] = useState([]);
-
+  const [selectedRowData, setSelectedRowData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getPositions = async (adate) => {
+    const loadPositions = async () => {
       try {
-        const data = await axios.get(`${USIG_DATA_ENDPOINT}${adate}`);
-
-        setPositions(data.data);
-        console.log(`data is ${JSON.stringify(data)}`);
-      } catch (error) {
-        console.log(`Error while fetching positions ${error}`);
+        const data = await fetchResource(POSITIONS_ENDPOINT, "positions");
+        setPositions(data);
+      } catch (err) {
+        console.error("Failed to fetch positions:", err);
+      } finally {
+        setLoading(false);
       }
     };
-    getPositions(adate);
+    loadPositions();
   }, [timestamp]);
 
+  useEffect(() => {
+    if (selectedRowData) {
+      navigate(`/positions/edit/${selectedRowData.id}`);
+    }
+  }, [selectedRowData]);
 
   return (
-    <>
-      <h1>US IG Positions as of {adate}</h1>
-      
+    <div className="container mt-4">
+      <h2>Positions</h2>
+      <Link className="btn btn-primary mb-3" to="/positions/new">
+        Add New Position
+      </Link>
       <Outlet />
-  
-      {positions == null || positions.length === 0 ? (
-        <p>No positions defined yet</p>
+      {loading ? (
+        <p>Loading...</p>
+      ) : positions.length === 0 ? (
+        <p>No positions found.</p>
       ) : (
         <DataTable
-          data={positions}          
-          width_pct={100}          
+          data={positions}
+          hiddenColumns={["id"]}
+          width_pct={100}
+          onRowClick={(event) => setSelectedRowData(event.data)}
         />
       )}
-    </>
+    </div>
   );
 };
 

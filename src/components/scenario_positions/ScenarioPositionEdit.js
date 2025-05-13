@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import GenericEditData from "../GenericDataComponents/GenericEditData";
 import {
@@ -6,10 +6,12 @@ import {
   STRESS_SCENARIOS_ENDPOINT,
   VANILLA_BONDS_ENDPOINT,
 } from "../ApiUtils/ApiEndpoints";
+import AppContext from "../../AppContext";
 
 const ScenarioPositionEdit = () => {
   const { scenarioPositionId } = useParams();
   const navigate = useNavigate();
+  const { setFlashMessages } = useContext(AppContext);
 
   const [formData, setFormData] = useState(null);
   const [scenarios, setScenarios] = useState([]);
@@ -17,34 +19,47 @@ const ScenarioPositionEdit = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [scenRes, bondRes, posRes] = await Promise.all([
-        fetch(STRESS_SCENARIOS_ENDPOINT),
-        fetch(VANILLA_BONDS_ENDPOINT),
-        fetch(`${SCENARIO_POSITIONS_ENDPOINT}${scenarioPositionId}/`),
-      ]);
+      try {
+        const [scenRes, bondRes, posRes] = await Promise.all([
+          fetch(STRESS_SCENARIOS_ENDPOINT),
+          fetch(VANILLA_BONDS_ENDPOINT),
+          fetch(`${SCENARIO_POSITIONS_ENDPOINT}${scenarioPositionId}/`),
+        ]);
 
-      const [scenarioData, bondData, positionData] = await Promise.all([
-        scenRes.json(),
-        bondRes.json(),
-        posRes.json(),
-      ]);
+        if (!scenRes.ok || !bondRes.ok || !posRes.ok)
+          throw new Error("Failed to load required data.");
 
-      setScenarios(scenarioData);
-      setBonds(bondData);
+        const [scenarioData, bondData, positionData] = await Promise.all([
+          scenRes.json(),
+          bondRes.json(),
+          posRes.json(),
+        ]);
 
-      // Map scenario and bond into select-compatible format
-      const selectedScenario = scenarioData.find((s) => s.id === positionData.scenario);
-      const selectedBond = bondData.find((b) => b.id === positionData.security);
+        setScenarios(scenarioData);
+        setBonds(bondData);
 
-      setFormData({
-        ...positionData,
-        scenario_id: selectedScenario ? { value: selectedScenario.id, label: selectedScenario.scenario_details?.name || selectedScenario.id } : null,
-        security_id: selectedBond ? { value: selectedBond.id, label: selectedBond.identifier_client } : null,
-      });
+        const selectedScenario = scenarioData.find((s) => s.id === positionData.scenario);
+        const selectedBond = bondData.find((b) => b.id === positionData.security);
+
+        setFormData({
+          ...positionData,
+          scenario_id: selectedScenario
+            ? { value: selectedScenario.id, label: selectedScenario.scenario_details?.name || selectedScenario.id }
+            : null,
+          security_id: selectedBond
+            ? { value: selectedBond.id, label: selectedBond.identifier_client }
+            : null,
+        });
+      } catch (err) {
+        setFlashMessages([
+          { category: "danger", message: "Failed to load scenario position data: " + err.message },
+        ]);
+        navigate("/scenario-positions");
+      }
     };
 
     fetchData();
-  }, [scenarioPositionId]);
+  }, [scenarioPositionId, navigate, setFlashMessages]);
 
   const handleEdit = async (e) => {
     e.preventDefault();
@@ -58,14 +73,21 @@ const ScenarioPositionEdit = () => {
           security_id: formData.security_id.value,
         }),
       });
+
       if (!res.ok) throw new Error("Failed to update scenario position");
+
+      setFlashMessages([
+        { category: "success", message: "Scenario position updated successfully." },
+      ]);
 
       navigate("/scenario-positions", {
         replace: true,
         state: { timestamp: new Date().getTime() },
       });
     } catch (err) {
-      alert("Error: " + err.message);
+      setFlashMessages([
+        { category: "danger", message: "Error updating scenario position: " + err.message },
+      ]);
     }
   };
 
@@ -74,14 +96,21 @@ const ScenarioPositionEdit = () => {
       const res = await fetch(`${SCENARIO_POSITIONS_ENDPOINT}${scenarioPositionId}/`, {
         method: "DELETE",
       });
+
       if (!res.ok) throw new Error("Delete failed");
+
+      setFlashMessages([
+        { category: "success", message: "Scenario position deleted successfully." },
+      ]);
 
       navigate("/scenario-positions", {
         replace: true,
         state: { timestamp: new Date().getTime() },
       });
     } catch (err) {
-      alert("Delete failed: " + err.message);
+      setFlashMessages([
+        { category: "danger", message: "Delete failed: " + err.message },
+      ]);
     }
   };
 
@@ -95,7 +124,7 @@ const ScenarioPositionEdit = () => {
       setFieldValue: (v) => setFormData({ ...formData, scenario_id: v }),
       selectOptions: scenarios.map((s) => ({
         value: s.id,
-        label: `${s.scenario_details?.name} period ${s.period_number} simulation ${s.simulation_number} curve ${s.curve_details?.curve_name?.name} adate ${s.curve_details?.adate} year ${s.curve_details?.year} shock ${s.parallel_shock_size}` || `Scenario ${s.id}`,
+        label: `${s.scenario_details?.name} period ${s.period_number} simulation ${s.simulation_number}`,
       })),
     },
     {
@@ -108,14 +137,54 @@ const ScenarioPositionEdit = () => {
         label: b.identifier_client,
       })),
     },
-    { fieldType: "text", fieldLabel: "Portfolio Name", fieldValue: formData.portfolio_name, setFieldValue: (v) => setFormData({ ...formData, portfolio_name: v }) },
-    { fieldType: "date", fieldLabel: "Position Date", fieldValue: formData.position_date, setFieldValue: (v) => setFormData({ ...formData, position_date: v }) },
-    { fieldType: "number", fieldLabel: "Lot ID", fieldValue: formData.lot_id, setFieldValue: (v) => setFormData({ ...formData, lot_id: parseInt(v) }) },
-    { fieldType: "number", fieldLabel: "Quantity", fieldValue: formData.quantity, setFieldValue: (v) => setFormData({ ...formData, quantity: parseFloat(v) }) },
-    { fieldType: "number", fieldLabel: "Notional Amount", fieldValue: formData.notional_amount, setFieldValue: (v) => setFormData({ ...formData, notional_amount: parseFloat(v) }) },
-    { fieldType: "number", fieldLabel: "Par Value", fieldValue: formData.par_value, setFieldValue: (v) => setFormData({ ...formData, par_value: parseFloat(v) }) },
-    { fieldType: "number", fieldLabel: "Book Price", fieldValue: formData.book_price, setFieldValue: (v) => setFormData({ ...formData, book_price: parseFloat(v) }) },
-    { fieldType: "number", fieldLabel: "Book Value", fieldValue: formData.book_value, setFieldValue: (v) => setFormData({ ...formData, book_value: parseFloat(v) }) },
+    {
+      fieldType: "text",
+      fieldLabel: "Portfolio Name",
+      fieldValue: formData.portfolio_name,
+      setFieldValue: (v) => setFormData({ ...formData, portfolio_name: v }),
+    },
+    {
+      fieldType: "date",
+      fieldLabel: "Position Date",
+      fieldValue: formData.position_date,
+      setFieldValue: (v) => setFormData({ ...formData, position_date: v }),
+    },
+    {
+      fieldType: "number",
+      fieldLabel: "Lot ID",
+      fieldValue: formData.lot_id,
+      setFieldValue: (v) => setFormData({ ...formData, lot_id: parseInt(v) }),
+    },
+    {
+      fieldType: "number",
+      fieldLabel: "Quantity",
+      fieldValue: formData.quantity,
+      setFieldValue: (v) => setFormData({ ...formData, quantity: parseFloat(v) }),
+    },
+    {
+      fieldType: "number",
+      fieldLabel: "Notional Amount",
+      fieldValue: formData.notional_amount,
+      setFieldValue: (v) => setFormData({ ...formData, notional_amount: parseFloat(v) }),
+    },
+    {
+      fieldType: "number",
+      fieldLabel: "Par Value",
+      fieldValue: formData.par_value,
+      setFieldValue: (v) => setFormData({ ...formData, par_value: parseFloat(v) }),
+    },
+    {
+      fieldType: "number",
+      fieldLabel: "Book Price",
+      fieldValue: formData.book_price,
+      setFieldValue: (v) => setFormData({ ...formData, book_price: parseFloat(v) }),
+    },
+    {
+      fieldType: "number",
+      fieldLabel: "Book Value",
+      fieldValue: formData.book_value,
+      setFieldValue: (v) => setFormData({ ...formData, book_value: parseFloat(v) }),
+    },
   ];
 
   return (

@@ -17,13 +17,17 @@ const StressScenario = () => {
         const data = await fetchResource(STRESS_SCENARIOS_ENDPOINT, "stress-scenarios");
 
         const flattened = data.map((item) => {
-          const curve = item.curve_details || {};
           const scenario = item.scenario_details || {};
+          const shocks = item.curve_point_shocks || [];
+
+          const firstShock = shocks[0] || {};
+          const curve = firstShock.curve_point_details || {};
 
           return {
             ...item,
             scenario_name: scenario.name || "",
-            curve_name: curve.curve_name.name || "",
+            shock_count: shocks.length,
+            curve_name: curve.curve_name || "",
             curve_adate: curve.adate || "",
             curve_year: curve.year || "",
           };
@@ -34,6 +38,7 @@ const StressScenario = () => {
         console.log(`Error while fetching stress scenarios: ${error}`);
       }
     };
+
     getScenarios();
   }, [timestamp]);
 
@@ -47,6 +52,17 @@ const StressScenario = () => {
     setSelectedRowData(event.data);
   };
 
+  const columnDefinitions = [
+    { field: "scenario_name", headerName: "Scenario Name", width: 200 },
+    { field: "period_number", headerName: "Period #", width: 120 },
+    { field: "simulation_number", headerName: "Simulation #", width: 130 },
+    { field: "period_length", headerName: "Length (years)", width: 140 },
+    { field: "shock_count", headerName: "Shock Count", width: 120 },
+    { field: "curve_name", headerName: "Curve Name", width: 150 },
+    { field: "curve_adate", headerName: "As of Date", width: 130 },
+    { field: "curve_year", headerName: "Year", width: 100 },
+  ];
+
   return (
     <>
       <h1>Stress Scenarios</h1>
@@ -59,7 +75,8 @@ const StressScenario = () => {
       ) : (
         <DataTable
           data={scenarios}
-          hiddenColumns={["id", "curve", "scenario", "curve_details", "scenario_details"]}
+          columns={columnDefinitions}
+          hiddenColumns={["id", "scenario", "scenario_details", "curve_point_shocks"]}
           width_pct={100}
           onRowClick={handleRowClick}
         />

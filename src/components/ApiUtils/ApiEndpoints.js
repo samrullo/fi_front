@@ -19,6 +19,7 @@ export const CURVEPOINTS_ENDPOINT = `${API_HOSTNAME}/fi/v1/curve-points/`;
 export const CURVEPOINTS_BY_DATE_ENDPOINT = (curveName, adate) =>
   `${API_HOSTNAME}/fi/v1/curve-points/by-date/${curveName}/${adate}/`;
 export const CURVEPOINTS_UPLOAD_ENDPOINT = `${API_HOSTNAME}/fi/v1/upload-curve/`;
+export const CURVE_POINT_SHOCKS_ENDPOINT = `${API_HOSTNAME}/fi/v1/curve-point-shocks/`;
 
 export const STRESS_SCENARIOS_ENDPOINT = `${API_HOSTNAME}/fi/v1/stress-scenarios/`;
 export const STRESS_SCENARIOS_UPLOAD_ENDPOINT = `${API_HOSTNAME}/fi/v1/upload-stress-scenarios/`;

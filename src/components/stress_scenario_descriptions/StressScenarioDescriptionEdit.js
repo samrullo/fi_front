@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import GenericEditData from "../GenericDataComponents/GenericEditData";
 import { STRESS_SCENARIO_DESCRIPTIONS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import AppContext from "../../AppContext";
 
 const StressScenarioDescriptionEdit = () => {
   const { descriptionId } = useParams();
   const navigate = useNavigate();
+  const { setFlashMessages } = useContext(AppContext);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -15,15 +17,19 @@ const StressScenarioDescriptionEdit = () => {
       try {
         const res = await fetch(`${STRESS_SCENARIO_DESCRIPTIONS_ENDPOINT}${descriptionId}/`);
         if (!res.ok) throw new Error("Failed to fetch scenario description");
+
         const data = await res.json();
         setName(data.name);
         setDescription(data.description);
       } catch (err) {
-        alert("Error loading scenario description: " + err.message);
+        setFlashMessages([
+          { category: "danger", message: "Error loading scenario description: " + err.message },
+        ]);
+        navigate("/stress-scenario-descriptions");
       }
     };
     fetchDescription();
-  }, [descriptionId]);
+  }, [descriptionId, navigate, setFlashMessages]);
 
   const handleEdit = async () => {
     try {
@@ -35,12 +41,18 @@ const StressScenarioDescriptionEdit = () => {
 
       if (!res.ok) throw new Error("Failed to update");
 
+      setFlashMessages([
+        { category: "success", message: "Scenario description updated successfully." },
+      ]);
+
       navigate("/stress-scenario-descriptions", {
         replace: true,
         state: { timestamp: new Date().getTime() },
       });
     } catch (err) {
-      alert("Error: " + err.message);
+      setFlashMessages([
+        { category: "danger", message: "Error updating description: " + err.message },
+      ]);
     }
   };
 
@@ -52,12 +64,18 @@ const StressScenarioDescriptionEdit = () => {
 
       if (!res.ok) throw new Error("Failed to delete");
 
+      setFlashMessages([
+        { category: "success", message: "Scenario description deleted successfully." },
+      ]);
+
       navigate("/stress-scenario-descriptions", {
         replace: true,
         state: { timestamp: new Date().getTime() },
       });
     } catch (err) {
-      alert("Error: " + err.message);
+      setFlashMessages([
+        { category: "danger", message: "Error deleting description: " + err.message },
+      ]);
     }
   };
 

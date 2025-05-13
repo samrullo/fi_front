@@ -15,14 +15,29 @@ const Position = () => {
   useEffect(() => {
     const loadPositions = async () => {
       try {
-        const data = await fetchResource(POSITIONS_ENDPOINT, "positions");
-        setPositions(data);
+        const rawData = await fetchResource(POSITIONS_ENDPOINT, "positions");
+
+        const flattened = rawData.map((item) => {
+          const sec = item.security || {};
+          return {
+            ...item,
+            identifier_client: sec.identifier_client || "",
+            asset_name: sec.asset_name || "",
+            fixed_coupon: sec.fixed_coupon || "",
+            frequency: sec.frequency || "",
+            maturity: sec.maturity || "",
+            currency: sec.currency || "",
+          };
+        });
+
+        setPositions(flattened);
       } catch (err) {
         console.error("Failed to fetch positions:", err);
       } finally {
         setLoading(false);
       }
     };
+
     loadPositions();
   }, [timestamp]);
 
@@ -31,6 +46,25 @@ const Position = () => {
       navigate(`/positions/edit/${selectedRowData.id}`);
     }
   }, [selectedRowData]);
+
+  const columns = [
+    { field: "portfolio_name", headerName: "Portfolio" },
+    { field: "identifier_client", headerName: "Client ID" },
+    { field: "asset_name", headerName: "Asset Name" },
+    { field: "fixed_coupon", headerName: "Coupon (%)" },
+    { field: "frequency", headerName: "Frequency" },
+    { field: "maturity", headerName: "Maturity Date" },
+    { field: "currency", headerName: "Currency" },
+    { field: "position_date", headerName: "Date" },
+    { field: "lot_id", headerName: "Lot ID" },
+    { field: "quantity", headerName: "Quantity" },
+    { field: "notional_amount", headerName: "Notional" },
+    { field: "par_value", headerName: "Par Value" },
+    { field: "book_price", headerName: "Book Price" },
+    { field: "book_value", headerName: "Book Value" },
+    { field: "discounted_price", headerName: "Disc. Price" },
+    { field: "discounted_value", headerName: "Disc. Value" },
+  ];
 
   return (
     <div className="container mt-4">
@@ -46,6 +80,7 @@ const Position = () => {
       ) : (
         <DataTable
           data={positions}
+          columns={columns}
           hiddenColumns={["id"]}
           width_pct={100}
           onRowClick={(event) => setSelectedRowData(event.data)}

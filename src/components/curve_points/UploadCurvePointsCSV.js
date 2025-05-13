@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
+import AppContext from "../../AppContext";
 
 function UploadCurvePointsCSV() {
   const [file, setFile] = useState(null);
+  const { setFlashMessages } = useContext(AppContext);
 
   const handleUpload = async () => {
     if (!file) {
-      alert("Please select a file first.");
+      setFlashMessages([
+        { category: 'warning', message: 'Please select a file first.' },
+      ]);
       return;
     }
 
@@ -17,9 +21,19 @@ function UploadCurvePointsCSV() {
       const res = await axios.post("http://localhost:8000/fi/v1/upload-curve/", formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
-      alert(`Upload successful: ${res.data.points} points uploaded`);
+
+      setFlashMessages([
+        { category: 'success', message: `Upload successful: ${res.data.points} points uploaded` },
+      ]);
+      setFile(null);
+      document.getElementById("curvePointsFile").value = ""; // reset input
     } catch (err) {
-      alert("Error uploading: " + (err.response?.data?.error || err.message));
+      setFlashMessages([
+        {
+          category: 'danger',
+          message: "Error uploading: " + (err.response?.data?.error || err.message),
+        },
+      ]);
     }
   };
 

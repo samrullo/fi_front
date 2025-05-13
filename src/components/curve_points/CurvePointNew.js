@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericNewData from "../GenericDataComponents/GenericNewData";
-import { CURVES_DESCRIPTIONS_ENDPOINT, CURVEPOINTS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import {
+  CURVES_DESCRIPTIONS_ENDPOINT,
+  CURVEPOINTS_ENDPOINT,
+} from "../ApiUtils/ApiEndpoints";
+import AppContext from "../../AppContext";
 
 const CurvePointNew = () => {
   const navigate = useNavigate();
+  const { setFlashMessages } = useContext(AppContext);
 
   const [curveList, setCurveList] = useState([]);
   const [selectedCurve, setSelectedCurve] = useState(null);
@@ -17,16 +22,22 @@ const CurvePointNew = () => {
       try {
         const res = await fetch(CURVES_DESCRIPTIONS_ENDPOINT);
         if (!res.ok) throw new Error("Failed to fetch curves");
+
         const data = await res.json();
         setCurveList(data);
-        if (data.length > 0) setSelectedCurve({ value: data[0].id, label: data[0].curve_name });
+
+        if (data.length > 0) {
+          setSelectedCurve({ value: data[0].id, label: data[0].curve_name });
+        }
       } catch (err) {
-        alert("Error loading curve names: " + err.message);
+        setFlashMessages([
+          { category: "danger", message: "Error loading curve names: " + err.message },
+        ]);
       }
     };
 
     fetchCurves();
-  }, []);
+  }, [setFlashMessages]);
 
   const handleNewData = async (e) => {
     e.preventDefault();
@@ -46,12 +57,18 @@ const CurvePointNew = () => {
 
       if (!res.ok) throw new Error("Failed to create curve point");
 
+      setFlashMessages([
+        { category: "success", message: "Curve point created successfully." },
+      ]);
+
       navigate("/curve-points", {
         replace: true,
         state: { timestamp: new Date().getTime() },
       });
     } catch (err) {
-      alert("Error: " + err.message);
+      setFlashMessages([
+        { category: "danger", message: "Error: " + err.message },
+      ]);
     }
   };
 

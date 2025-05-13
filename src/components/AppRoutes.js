@@ -25,6 +25,10 @@ import StressScenarioNew from "./stress_scenarios/StressScenarioNew";
 import StressScenarioEdit from "./stress_scenarios/StressScenarioEdit";
 import UploadStressScenarioCSV from "./stress_scenarios/UploadStressScenarioCSV";
 
+import CurvePointShock from "./curve_point_shocks/CurvePointShock";
+import CurvePointShockNew from "./curve_point_shocks/CurvePointShockNew";
+import CurvePointShockEdit from "./curve_point_shocks/CurvePointShockEdit";
+
 import StressScenarioDescription from "./stress_scenario_descriptions/StressScenarioDescription";
 import StressScenarioDescriptionNew from "./stress_scenario_descriptions/StressScenarioDescriptionNew";
 import StressScenarioDescriptionEdit from "./stress_scenario_descriptions/StressScenarioDescriptionEdit";
@@ -100,7 +104,10 @@ const AppRoutes = () => {
           <Route path="new" element={<StressScenarioDescriptionNew />} />
           <Route path="edit/:descriptionId" element={<StressScenarioDescriptionEdit />} />
         </Route>
-
+        <Route path="/curve-point-shocks" element={<CurvePointShock />}>
+          <Route path="new" element={<CurvePointShockNew />} />
+          <Route path="edit/:shockId" element={<CurvePointShockEdit />} />
+        </Route>
         <Route path="/stress-scenarios" element={<StressScenario />}>
           <Route path="new" element={<StressScenarioNew />} />
           <Route path="edit/:scenarioId" element={<StressScenarioEdit />} />

@@ -1,33 +1,36 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
 import * as d3 from "d3";
 import DataTable from "../GenericDataComponents/DataTable";
-import { API_HOSTNAME, CURVEPOINTS_BY_DATE_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import { CURVEPOINTS_BY_DATE_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import AppContext from "../../AppContext";
 
 const CurvePointsByDate = () => {
   const { curveName, adate } = useParams();
   const [curvePoints, setCurvePoints] = useState([]);
   const [loading, setLoading] = useState(true);
   const chartRef = useRef(null);
+  const { setFlashMessages } = useContext(AppContext);
 
   useEffect(() => {
     const fetchFilteredCurvePoints = async () => {
       try {
-        const res = await fetch(
-          `${CURVEPOINTS_BY_DATE_ENDPOINT(curveName,adate)}`
-        );
+        const res = await fetch(`${CURVEPOINTS_BY_DATE_ENDPOINT(curveName, adate)}`);
         if (!res.ok) throw new Error("Failed to fetch curve points");
+
         const data = await res.json();
         setCurvePoints(data);
       } catch (err) {
-        alert("Error: " + err.message);
+        setFlashMessages([
+          { category: "danger", message: "Error: " + err.message },
+        ]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchFilteredCurvePoints();
-  }, [curveName, adate]);
+  }, [curveName, adate, setFlashMessages]);
 
   useEffect(() => {
     if (!curvePoints.length) return;

@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import GenericEditData from "../GenericDataComponents/GenericEditData";
 import { CURVEPOINTS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import AppContext from "../../AppContext";
 
 const CurvePointEdit = () => {
   const navigate = useNavigate();
   const { curvePointId } = useParams();
+  const { setFlashMessages } = useContext(AppContext);
 
   const [curveNameId, setCurveNameId] = useState(null);
   const [curveName, setCurveName] = useState("");
@@ -18,6 +20,7 @@ const CurvePointEdit = () => {
       try {
         const res = await fetch(`${CURVEPOINTS_ENDPOINT}${curvePointId}/`);
         if (!res.ok) throw new Error("Curve point not found");
+
         const data = await res.json();
         setCurveNameId(data.curve);
         setCurveName(data.curve_name);
@@ -25,14 +28,16 @@ const CurvePointEdit = () => {
         setYear(data.year);
         setRate(data.rate);
       } catch (err) {
+        setFlashMessages([
+          { category: "danger", message: "Failed to fetch curve point data." },
+        ]);
         console.error(err);
-        alert("Failed to fetch curve point data");
         navigate("/curve-points");
       }
     };
 
     fetchCurve();
-  }, [curvePointId, navigate]);
+  }, [curvePointId, navigate, setFlashMessages]);
 
   const handleEdit = async (e) => {
     e.preventDefault();
@@ -50,12 +55,18 @@ const CurvePointEdit = () => {
 
       if (!res.ok) throw new Error("Failed to update");
 
+      setFlashMessages([
+        { category: "success", message: "Curve point updated successfully." },
+      ]);
+
       navigate("/curve-points", {
         replace: true,
         state: { timestamp: new Date().getTime() },
       });
     } catch (err) {
-      alert("Update failed");
+      setFlashMessages([
+        { category: "danger", message: "Update failed." },
+      ]);
       console.error(err);
     }
   };
@@ -68,12 +79,18 @@ const CurvePointEdit = () => {
 
       if (!res.ok) throw new Error("Failed to delete");
 
+      setFlashMessages([
+        { category: "success", message: "Curve point deleted successfully." },
+      ]);
+
       navigate("/curve-points", {
         replace: true,
         state: { timestamp: new Date().getTime() },
       });
     } catch (err) {
-      alert("Delete failed");
+      setFlashMessages([
+        { category: "danger", message: "Delete failed." },
+      ]);
       console.error(err);
     }
   };

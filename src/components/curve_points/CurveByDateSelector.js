@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { CURVES_DESCRIPTIONS_ENDPOINT, API_HOSTNAME, CURVEPOINTS_BY_DATE_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import {
+  CURVES_DESCRIPTIONS_ENDPOINT,
+  API_HOSTNAME,
+} from "../ApiUtils/ApiEndpoints";
+import AppContext from "../../AppContext";
 
 const CurveByDateSelector = () => {
   const [curveName, setCurveName] = useState("");
   const [adate, setAdate] = useState("");
   const [availableCurves, setAvailableCurves] = useState([]);
   const navigate = useNavigate();
+  const { setFlashMessages } = useContext(AppContext);
 
   useEffect(() => {
     const fetchCurves = async () => {
@@ -19,17 +24,21 @@ const CurveByDateSelector = () => {
         setAvailableCurves(uniqueNames);
         if (uniqueNames.length > 0) setCurveName(uniqueNames[0]);
       } catch (err) {
-        alert("Error loading curve names: " + err.message);
+        setFlashMessages([
+          { category: "danger", message: "Error loading curve names: " + err.message },
+        ]);
       }
     };
 
     fetchCurves();
-  }, []);
+  }, [setFlashMessages]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!curveName || !adate) {
-      alert("Please select both curve name and date.");
+      setFlashMessages([
+        { category: "warning", message: "Please select both curve name and date." },
+      ]);
       return;
     }
     navigate(`/curve-points/by-date/${curveName}/${adate}`);
@@ -37,19 +46,23 @@ const CurveByDateSelector = () => {
 
   const handleDownload = async () => {
     if (!curveName || !adate) {
-      alert("Please select both curve name and date.");
+      setFlashMessages([
+        { category: "warning", message: "Please select both curve name and date." },
+      ]);
       return;
     }
 
     try {
-      const res = await fetch(`${API_HOSTNAME}/fi/v1/curves/by-date/${curveName}/${adate}/`);
+      const res = await fetch(
+        `${API_HOSTNAME}/fi/v1/curves/by-date/${curveName}/${adate}/`
+      );
       if (!res.ok) throw new Error("Failed to fetch curve data");
-      const data = await res.json();
 
+      const data = await res.json();
       const header = ["curve_name", "adate", "year", "rate"];
       const rows = data.map((c) => [c.curve_name, c.adate, c.year, c.rate]);
 
-      const csvContent = [header, ...rows].map(r => r.join(",")).join("\n");
+      const csvContent = [header, ...rows].map((r) => r.join(",")).join("\n");
       const blob = new Blob([csvContent], { type: "text/csv" });
       const url = URL.createObjectURL(blob);
 
@@ -59,8 +72,14 @@ const CurveByDateSelector = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
+      setFlashMessages([
+        { category: "success", message: "CSV downloaded successfully." },
+      ]);
     } catch (err) {
-      alert("Error downloading curve CSV: " + err.message);
+      setFlashMessages([
+        { category: "danger", message: "Error downloading curve CSV: " + err.message },
+      ]);
     }
   };
 
@@ -93,8 +112,14 @@ const CurveByDateSelector = () => {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary me-2">Go to Curve</button>
-        <button type="button" className="btn btn-success" onClick={handleDownload}>
+        <button type="submit" className="btn btn-primary me-2">
+          Go to Curve
+        </button>
+        <button
+          type="button"
+          className="btn btn-success"
+          onClick={handleDownload}
+        >
           Download CSV
         </button>
       </form>

@@ -39,7 +39,7 @@ const PositionNew = () => {
 
   const handleNewData = async (e) => {
     e.preventDefault();
-    const payload = { ...formData, security: securityId };
+    const payload = { ...formData, security_id: securityId.value };
     try {
       const res = await fetch(POSITIONS_ENDPOINT, {
         method: "POST",

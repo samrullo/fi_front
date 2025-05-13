@@ -1,12 +1,12 @@
-// src/components/scenario_positions/ScenarioPositionNew.js
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericNewData from "../GenericDataComponents/GenericNewData";
 import { SCENARIO_POSITIONS_ENDPOINT, STRESS_SCENARIOS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import AppContext from "../../AppContext";
 
 const ScenarioPositionNew = () => {
   const navigate = useNavigate();
+  const { setFlashMessages } = useContext(AppContext);
 
   const [scenarioList, setScenarioList] = useState([]);
   const [formData, setFormData] = useState({
@@ -32,15 +32,20 @@ const ScenarioPositionNew = () => {
         const data = await res.json();
         setScenarioList(data);
         if (data.length > 0) {
-          setFormData((prev) => ({ ...prev, scenario_id: data[0].id }));
+          setFormData((prev) => ({
+            ...prev,
+            scenario_id: { value: data[0].id, label: data[0].scenario_details?.name || `Scenario ${data[0].id}` }
+          }));
         }
       } catch (err) {
-        alert("Error loading scenarios: " + err.message);
+        setFlashMessages([
+          { category: "danger", message: "Error loading scenarios: " + err.message }
+        ]);
       }
     };
 
     fetchScenarios();
-  }, []);
+  }, [setFlashMessages]);
 
   const handleNewData = async (e) => {
     e.preventDefault();
@@ -50,14 +55,21 @@ const ScenarioPositionNew = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...formData, scenario_id: formData.scenario_id.value }),
       });
+
       if (!res.ok) throw new Error("Failed to create Scenario Position");
+
+      setFlashMessages([
+        { category: "success", message: "Scenario position created successfully." }
+      ]);
 
       navigate("/scenario-positions", {
         replace: true,
         state: { timestamp: new Date().getTime() },
       });
     } catch (err) {
-      alert("Error: " + err.message);
+      setFlashMessages([
+        { category: "danger", message: "Error: " + err.message }
+      ]);
     }
   };
 
@@ -67,7 +79,12 @@ const ScenarioPositionNew = () => {
       fieldLabel: "Scenario",
       fieldValue: formData.scenario_id,
       setFieldValue: (v) => setFormData({ ...formData, scenario_id: v }),
-      selectOptions: scenarioList.map((s) => ({ value: s.id, label: `${s.scenario_details.name} period ${s.period_number} simulation ${s.simulation_number} curve ${s.curve_details.curve_name.name} adate ${s.curve_details.adate} year ${s.curve_details.year} shock ${s.parallel_shock_size}` || `Scenario ${s.id}` })),
+      selectOptions: scenarioList.map((s) => ({
+        value: s.id,
+        label:
+          `${s.scenario_details.name} period ${s.period_number} simulation ${s.simulation_number} curve ${s.curve_details.curve_name.name} adate ${s.curve_details.adate} year ${s.curve_details.year} shock ${s.parallel_shock_size}` ||
+          `Scenario ${s.id}`,
+      })),
     },
     { fieldType: "text", fieldLabel: "Portfolio Name", fieldValue: formData.portfolio_name, setFieldValue: (v) => setFormData({ ...formData, portfolio_name: v }) },
     { fieldType: "date", fieldLabel: "Position Date", fieldValue: formData.position_date, setFieldValue: (v) => setFormData({ ...formData, position_date: v }) },

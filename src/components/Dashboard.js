@@ -18,7 +18,7 @@ const Dashboard = () => {
           <Link to="/positions/new" className="list-group-item">
             Add New Position
           </Link>
-          <Link to="/upload_positions" className="list-group-item">
+          <Link to="/upload-positions" className="list-group-item">
             Upload Positions from CSV
           </Link>
         </div>

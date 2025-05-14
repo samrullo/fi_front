@@ -1,11 +1,13 @@
-// src/components/vanilla_bonds/VanillaBondNew.js
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericNewData from "../GenericDataComponents/GenericNewData";
 import { VANILLA_BONDS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import AppContext from "../../AppContext";
 
 const VanillaBondNew = () => {
   const navigate = useNavigate();
+  const { setFlashMessages } = useContext(AppContext);
+
   const [formData, setFormData] = useState({
     identifier_client: "",
     asset_name: "",
@@ -32,12 +34,13 @@ const VanillaBondNew = () => {
 
       if (!res.ok) throw new Error("Failed to create bond record");
 
+      setFlashMessages([{ category: "success", message: "Vanilla bond created successfully!" }]);
       navigate("/vanilla-bonds", {
         replace: true,
         state: { timestamp: new Date().getTime() },
       });
     } catch (err) {
-      alert("Error: " + err.message);
+      setFlashMessages([{ category: "danger", message: "Error: " + err.message }]);
     }
   };
 

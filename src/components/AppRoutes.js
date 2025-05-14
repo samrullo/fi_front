@@ -49,6 +49,7 @@ import UploadRiskCoreCSV from "./risk_cores/UploadRiskCoreCSV";
 import Position from "./positions/Position";
 import PositionNew from "./positions/PositionNew";
 import PositionEdit from "./positions/PositionEdit";
+import UploadPositionsCSV from "./positions/UploadPositionsCSV";
 
 import ScenarioPosition from "./scenario_positions/ScenarioPosition";
 import ScenarioPositionNew from "./scenario_positions/ScenarioPositionNew";
@@ -75,6 +76,7 @@ const AppRoutes = () => {
           <Route path="new" element={<PositionNew />} />
           <Route path="edit/:positionId" element={<PositionEdit />} />
         </Route>
+        <Route path="/upload-positions" element={<UploadPositionsCSV />} />
         <Route path="/scenario-positions" element={<ScenarioPosition />}>
           <Route path="new" element={<ScenarioPositionNew />} />
           <Route path="edit/:scenarioPositionId" element={<ScenarioPositionEdit />} />

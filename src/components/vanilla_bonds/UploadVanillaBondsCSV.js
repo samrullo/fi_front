@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { API_HOSTNAME } from "../ApiUtils/ApiEndpoints";
+import AppContext from "../../AppContext";
 
 const UploadVanillaBondsCSV = () => {
   const [file, setFile] = useState(null);
+  const { setFlashMessages } = useContext(AppContext);
 
   const handleUpload = async () => {
     if (!file) {
-      alert("Please select a CSV file first.");
+      setFlashMessages([{ category: "warning", message: "Please select a CSV file first." }]);
       return;
     }
 
@@ -22,9 +24,22 @@ const UploadVanillaBondsCSV = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      alert(`Upload successful: ${res.data.records_created} records added`);
+
+      setFlashMessages([
+        {
+          category: "success",
+          message: `Upload successful: ${res.data.records_created} records added`,
+        },
+      ]);
+      setFile(null);
+      document.getElementById("vanillaBondFile").value = "";
     } catch (err) {
-      alert("Upload failed: " + (err.response?.data?.error || err.message));
+      setFlashMessages([
+        {
+          category: "danger",
+          message: "Upload failed: " + (err.response?.data?.error || err.message),
+        },
+      ]);
     }
   };
 

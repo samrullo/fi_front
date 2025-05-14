@@ -1,12 +1,13 @@
-// src/components/vanilla_bonds/VanillaBondEdit.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import GenericEditData from "../GenericDataComponents/GenericEditData";
 import { VANILLA_BONDS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
+import AppContext from "../../AppContext";
 
 const VanillaBondEdit = () => {
   const navigate = useNavigate();
   const { bondId } = useParams();
+  const { setFlashMessages } = useContext(AppContext);
 
   const [identifier_client, setIdentifierClient] = useState("");
   const [asset_name, setAssetName] = useState("");
@@ -26,13 +27,13 @@ const VanillaBondEdit = () => {
         setFrequency(data.frequency);
         setMaturity(data.maturity);
       } catch (err) {
-        alert("Error loading bond: " + err.message);
+        setFlashMessages([{ category: "danger", message: "Error loading bond: " + err.message }]);
         navigate("/vanilla-bonds");
       }
     };
 
     fetchBond();
-  }, [bondId, navigate]);
+  }, [bondId, navigate, setFlashMessages]);
 
   const handleEdit = async (e) => {
     e.preventDefault();
@@ -49,9 +50,10 @@ const VanillaBondEdit = () => {
         }),
       });
       if (!res.ok) throw new Error("Update failed");
+      setFlashMessages([{ category: "success", message: "Bond updated successfully!" }]);
       navigate("/vanilla-bonds", { replace: true, state: { timestamp: new Date().getTime() } });
     } catch (err) {
-      alert("Error: " + err.message);
+      setFlashMessages([{ category: "danger", message: "Error: " + err.message }]);
     }
   };
 
@@ -61,9 +63,10 @@ const VanillaBondEdit = () => {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Delete failed");
+      setFlashMessages([{ category: "warning", message: "Bond deleted." }]);
       navigate("/vanilla-bonds", { replace: true, state: { timestamp: new Date().getTime() } });
     } catch (err) {
-      alert("Delete failed: " + err.message);
+      setFlashMessages([{ category: "danger", message: "Delete failed: " + err.message }]);
     }
   };
 

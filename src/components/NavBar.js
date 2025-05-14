@@ -36,7 +36,11 @@ const NavBar = ({ title }) => {
                 Positions
               </Link>
             </li>
-
+            <li className="nav-item">
+              <Link className="nav-link" to="/upload-positions">
+                Upload Positions CSV
+              </Link>
+            </li>
             <li className="nav-item dropdown">
               <a
                 className="nav-link dropdown-toggle"

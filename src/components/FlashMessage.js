@@ -11,7 +11,7 @@ const FlashMessage = () => {
     if (flashMessages.length > 0) {
       const timer = setTimeout(() => {
         setFlashMessages([]); // Clear all flash messages after 3 seconds
-      }, 2000);
+      }, 10000);
 
       return () => clearTimeout(timer); // Cleanup to avoid memory leaks
     }

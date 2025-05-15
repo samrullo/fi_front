@@ -1,15 +1,20 @@
-import axios from "axios";
+// src/components/positions/UploadPositionsCSV.js
 import React, { useState, useContext } from "react";
-import AppContext from "../../AppContext"; // Adjust path if needed
+import axios from "axios";
+import AppContext from "../../AppContext";
+import { UPLOAD_POSITIONS_ENDPOINT } from "../ApiUtils/ApiEndpoints"; // ✅ Adjusted to use the centralized endpoint
 
-function UploadPositionsCSV() {
+const UploadPositionsCSV = () => {
   const [file, setFile] = useState(null);
   const { setFlashMessages } = useContext(AppContext);
 
   const handleUpload = async () => {
     if (!file) {
       setFlashMessages([
-        { category: "warning", message: "Please select a CSV file before uploading." },
+        {
+          category: "warning",
+          message: "⚠️ Please select a CSV file before uploading.",
+        },
       ]);
       return;
     }
@@ -18,20 +23,31 @@ function UploadPositionsCSV() {
     formData.append("file", file);
 
     try {
-      const res = await axios.post("http://localhost:8000/upload-positions/", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const res = await axios.post(
+        `${UPLOAD_POSITIONS_ENDPOINT}`, // ✅ Centralized base used
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
 
       setFlashMessages([
-        { category: "success", message: "✅ Success: " + res.data.status },
+        {
+          category: "success",
+          message: `✅ Success: ${res.data.status}`,
+        },
       ]);
+
+      // Reset file input
       setFile(null);
-      document.querySelector("input[type='file']").value = "";
+      document.getElementById("uploadCsv").value = "";
     } catch (err) {
       setFlashMessages([
         {
           category: "danger",
-          message: "❌ Error: " + (err.response?.data?.error || err.message),
+          message:
+            "❌ Error uploading file: " +
+            (err.response?.data?.error || err.message),
         },
       ]);
     }
@@ -40,6 +56,14 @@ function UploadPositionsCSV() {
   return (
     <div className="container mt-4">
       <h2>Upload Positions CSV</h2>
+      <p className="text-muted">
+        Please upload a CSV with the following columns:
+        <br />
+        <code>
+          portfolio_name, position_date, identifier_client, quantity,
+          book_price, curve_name
+        </code>
+      </p>
       <div className="mb-3">
         <label htmlFor="uploadCsv" className="form-label">
           Select CSV File
@@ -57,6 +81,6 @@ function UploadPositionsCSV() {
       </button>
     </div>
   );
-}
+};
 
 export default UploadPositionsCSV;

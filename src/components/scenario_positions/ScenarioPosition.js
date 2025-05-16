@@ -10,6 +10,7 @@ const ScenarioPosition = () => {
   const { timestamp } = state ?? {};
   const [positions, setPositions] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [editMode, setEditMode] = useState(false); // toggle for row click
 
   useEffect(() => {
     const loadPositions = async () => {
@@ -19,8 +20,9 @@ const ScenarioPosition = () => {
         const flattened = data.map((item) => {
           const scenario = item.scenario || {};
           const scenarioDetails = scenario.scenario_details || {};
-          const curve = scenario.curve_details || {};
-          const curveName = curve.curve_name || {};
+          const shocks = scenario.curve_point_shocks || [];
+          const firstShock = shocks[0] || {};
+          const curve = firstShock.curve_point_details || {};
           const bond = item.security || {};
 
           return {
@@ -28,10 +30,10 @@ const ScenarioPosition = () => {
             scenario_name: scenarioDetails.name || "",
             period_number: scenario.period_number ?? "",
             simulation_number: scenario.simulation_number ?? "",
-            curve_name: curveName.name || "",
+            curve_name: curve.curve_name || "",
             curve_adate: curve.adate || "",
-            curve_year:curve.year || "",
-            shock_size: scenario.parallel_shock_size ?? "",
+            curve_year: curve.year || "",
+            shock_size: firstShock.shock_size ?? "",
             identifier_client: bond.identifier_client || "",
             asset_name: bond.asset_name || "",
             asset_currency: bond.currency || "",
@@ -48,10 +50,10 @@ const ScenarioPosition = () => {
   }, [timestamp]);
 
   useEffect(() => {
-    if (selectedRowData) {
+    if (editMode && selectedRowData) {
       navigate(`/scenario-positions/edit/${selectedRowData.id}`);
     }
-  }, [selectedRowData]);
+  }, [selectedRowData, editMode, navigate]);
 
   const columns = [
     { field: "scenario_name", headerName: "Scenario Name" },
@@ -59,7 +61,7 @@ const ScenarioPosition = () => {
     { field: "simulation_number", headerName: "Simulation #" },
     { field: "curve_name", headerName: "Curve" },
     { field: "curve_adate", headerName: "As-of Date" },
-    {field:"curve_year",headerName:"Curve Year"},
+    { field: "curve_year", headerName: "Curve Year" },
     { field: "shock_size", headerName: "Shock Size (%)" },
     { field: "identifier_client", headerName: "Security ID" },
     { field: "asset_name", headerName: "Asset Name" },
@@ -70,22 +72,40 @@ const ScenarioPosition = () => {
     { field: "quantity", headerName: "Quantity" },
     { field: "book_price", headerName: "Book Price" },
     { field: "book_value", headerName: "Book Value" },
+    { field: "discounted_value", headerName: "Discounted Value" },
   ];
 
   return (
     <div className="container mt-4">
-      <h2>Scenario Positions</h2>
+      <div className="d-flex justify-content-between align-items-center">
+        <h2>Scenario Positions</h2>
+        <div className="form-check form-switch">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id="editModeSwitch"
+            checked={editMode}
+            onChange={() => setEditMode(!editMode)}
+          />
+          <label className="form-check-label" htmlFor="editModeSwitch">
+            Edit Mode
+          </label>
+        </div>
+      </div>
+
       <Link className="btn btn-primary mb-3" to="/scenario-positions/new">
         Add New Scenario Position
       </Link>
+
       <Outlet />
+
       {positions.length === 0 ? (
         <p>No scenario positions defined yet</p>
       ) : (
         <DataTable
           data={positions}
           columns={columns}
-          hiddenColumns={["id","scenario","security"]}
+          hiddenColumns={["id", "scenario", "security", "risk_scenario"]}
           width_pct={100}
           onRowClick={(event) => setSelectedRowData(event.data)}
         />

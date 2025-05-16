@@ -29,7 +29,6 @@ const StressScenario = () => {
             shock_count: shocks.length,
             curve_name: curve.curve_name || "",
             curve_adate: curve.adate || "",
-            curve_year: curve.year || "",
           };
         });
 
@@ -60,7 +59,6 @@ const StressScenario = () => {
     { field: "shock_count", headerName: "Shock Count", width: 120 },
     { field: "curve_name", headerName: "Curve Name", width: 150 },
     { field: "curve_adate", headerName: "As of Date", width: 130 },
-    { field: "curve_year", headerName: "Year", width: 100 },
   ];
 
   return (

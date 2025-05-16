@@ -54,6 +54,7 @@ import UploadPositionsCSV from "./positions/UploadPositionsCSV";
 import ScenarioPosition from "./scenario_positions/ScenarioPosition";
 import ScenarioPositionNew from "./scenario_positions/ScenarioPositionNew";
 import ScenarioPositionEdit from "./scenario_positions/ScenarioPositionEdit";
+import GenerateScenarioPositionsForm from "./scenario_positions/GenerateScenarioPositionsForm";
 
 
 
@@ -81,6 +82,7 @@ const AppRoutes = () => {
           <Route path="new" element={<ScenarioPositionNew />} />
           <Route path="edit/:scenarioPositionId" element={<ScenarioPositionEdit />} />
         </Route>
+        <Route path="/scenario-positions/generate" element={<GenerateScenarioPositionsForm />} />
 
         <Route path="/risk-cores" element={<RiskCore />}>
           <Route path="new" element={<RiskCoreNew />} />

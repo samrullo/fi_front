@@ -19,6 +19,7 @@ const Position = () => {
 
         const flattened = rawData.map((item) => {
           const sec = item.security || {};
+          const risk_core = item.risk_core || {};
           return {
             ...item,
             identifier_client: sec.identifier_client || "",
@@ -27,6 +28,7 @@ const Position = () => {
             frequency: sec.frequency || "",
             maturity: sec.maturity || "",
             currency: sec.currency || "",
+            discounted_price:risk_core.discounted_pv || "",
           };
         });
 

@@ -36,6 +36,9 @@ const Dashboard = () => {
           <Link to="/upload-scenario-positions" className="list-group-item">
             Upload Scenario Positions from CSV
           </Link>
+          <Link to="/scenario-positions/generate" className="list-group-item">
+            Generate Scenario Positions from Portfolio
+          </Link>
         </div>
       </div>
 

@@ -10,7 +10,30 @@ const ScenarioPosition = () => {
   const { timestamp } = state ?? {};
   const [positions, setPositions] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const [editMode, setEditMode] = useState(false); // toggle for row click
+  const [editMode, setEditMode] = useState(false);
+
+  const hiddenColumns = ["id", "scenario", "security", "risk_scenario"];
+
+  // CSV Export
+  const exportToCSV = (data, filename = "scenario_positions.csv") => {
+    if (!data.length) return;
+
+    const visibleKeys = Object.keys(data[0]).filter((key) => !hiddenColumns.includes(key));
+    const header = visibleKeys.join(",");
+    const rows = data.map((row) =>
+      visibleKeys.map((key) => `"${String(row[key] ?? "").replace(/"/g, '""')}"`).join(",")
+    );
+
+    const csvContent = [header, ...rows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   useEffect(() => {
     const loadPositions = async () => {
@@ -32,11 +55,11 @@ const ScenarioPosition = () => {
             simulation_number: scenario.simulation_number ?? "",
             curve_name: curve.curve_name || "",
             curve_adate: curve.adate || "",
-            curve_year: curve.year || "",
-            shock_size: firstShock.shock_size ?? "",
             identifier_client: bond.identifier_client || "",
             asset_name: bond.asset_name || "",
             asset_currency: bond.currency || "",
+            coupon: bond.fixed_coupon || "",
+            maturity: bond.maturity || ""
           };
         });
 
@@ -61,11 +84,11 @@ const ScenarioPosition = () => {
     { field: "simulation_number", headerName: "Simulation #" },
     { field: "curve_name", headerName: "Curve" },
     { field: "curve_adate", headerName: "As-of Date" },
-    { field: "curve_year", headerName: "Curve Year" },
-    { field: "shock_size", headerName: "Shock Size (%)" },
     { field: "identifier_client", headerName: "Security ID" },
     { field: "asset_name", headerName: "Asset Name" },
     { field: "asset_currency", headerName: "Currency" },
+    { field: "coupon", headerName: "Coupon" },
+    { field: "maturity", headerName: "Maturity" },
     { field: "portfolio_name", headerName: "Portfolio" },
     { field: "position_date", headerName: "Position Date" },
     { field: "lot_id", headerName: "Lot ID" },
@@ -93,9 +116,17 @@ const ScenarioPosition = () => {
         </div>
       </div>
 
-      <Link className="btn btn-primary mb-3" to="/scenario-positions/new">
-        Add New Scenario Position
-      </Link>
+      <div className="d-flex mb-3">
+        <Link className="btn btn-primary" to="/scenario-positions/new">
+          Add New Scenario Position
+        </Link>
+        <button
+          className="btn btn-secondary ms-2"
+          onClick={() => exportToCSV(positions)}
+        >
+          Download CSV
+        </button>
+      </div>
 
       <Outlet />
 
@@ -105,9 +136,13 @@ const ScenarioPosition = () => {
         <DataTable
           data={positions}
           columns={columns}
-          hiddenColumns={["id", "scenario", "security", "risk_scenario"]}
+          hiddenColumns={hiddenColumns}
           width_pct={100}
-          onRowClick={(event) => setSelectedRowData(event.data)}
+          onRowClick={(event) => {
+            if (editMode) {
+              setSelectedRowData(event.data);
+            }
+          }}
         />
       )}
     </div>

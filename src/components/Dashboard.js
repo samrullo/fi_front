@@ -9,6 +9,7 @@ const Dashboard = () => {
         Welcome to <strong>FI Analytics</strong> — your control center for managing fixed income data, stress testing, curve shocks, and portfolio analytics. Use the tools below to view, create, and upload records across all core modules.
       </p>
 
+      {/* Portfolio Positions */}
       <div className="mb-5">
         <h2>Portfolio Positions</h2>
         <div className="list-group">
@@ -24,6 +25,7 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Scenario Positions */}
       <div className="mb-5">
         <h2>Scenario Positions</h2>
         <div className="list-group">
@@ -42,6 +44,7 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Vanilla Bond SecMaster */}
       <div className="mb-5">
         <h2>Vanilla Bond SecMaster</h2>
         <div className="list-group">
@@ -57,6 +60,7 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Risk Core Analytics */}
       <div className="mb-5">
         <h2>Risk Core Analytics</h2>
         <div className="list-group">
@@ -72,6 +76,7 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Yield Curve Data */}
       <div className="mb-5">
         <h2>Yield Curve Data</h2>
         <div className="list-group">
@@ -93,6 +98,7 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Curve Point Shocks */}
       <div className="mb-5">
         <h2>Curve Point Shocks</h2>
         <div className="list-group">
@@ -105,6 +111,7 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Stress Testing */}
       <div className="mb-5">
         <h2>Stress Testing</h2>
         <div className="list-group">
@@ -119,6 +126,16 @@ const Dashboard = () => {
           </Link>
           <Link to="/upload-stress-scenarios" className="list-group-item">
             Upload Stress Scenarios CSV
+          </Link>
+        </div>
+      </div>
+
+      {/* 📈 Portfolio Analytics */}
+      <div className="mb-5">
+        <h2>Portfolio Analytics</h2>
+        <div className="list-group">
+          <Link to="/portfolio-stress-trend" className="list-group-item">
+            View Stress Scenario Trend Chart
           </Link>
         </div>
       </div>

@@ -34,6 +34,7 @@ export const RISK_SCENARIOS_ENDPOINT = `${API_HOSTNAME}/fi/v1/risk-scenarios/`;
 export const POSITIONS_ENDPOINT = `${API_HOSTNAME}/fi/v1/positions/`;
 export const UPLOAD_POSITIONS_ENDPOINT = `${API_HOSTNAME}/fi/v1/upload-positions/`;
 export const SCENARIO_POSITIONS_ENDPOINT = `${API_HOSTNAME}/fi/v1/scenario-positions/`;
+export const PORTFOLIO_STRESS_TREND_ENDPOINT = `${API_HOSTNAME}/fi/v1/portfolio-stress-trend/`;
 export const TRANSACTIONS_ENDPOINT = `${API_HOSTNAME}/fi/v1/transactions/`;
 export const ABOR_PNL_ENDPOINT = `${API_HOSTNAME}/fi/v1/aborpnls/`;
 

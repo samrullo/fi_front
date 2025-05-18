@@ -55,7 +55,7 @@ import ScenarioPosition from "./scenario_positions/ScenarioPosition";
 import ScenarioPositionNew from "./scenario_positions/ScenarioPositionNew";
 import ScenarioPositionEdit from "./scenario_positions/ScenarioPositionEdit";
 import GenerateScenarioPositionsForm from "./scenario_positions/GenerateScenarioPositionsForm";
-
+import PortfolioStressTrend from "./scenario_positions/PortfolioStressTrend";
 
 
 const AppRoutes = () => {
@@ -117,7 +117,7 @@ const AppRoutes = () => {
           <Route path="edit/:scenarioId" element={<StressScenarioEdit />} />
         </Route>
         <Route path="/upload-stress-scenarios" element={<UploadStressScenarioCSV />} />
-
+        <Route path="/portfolio-stress-trend" element={<PortfolioStressTrend />} />
         <Route path="/contacts" element={<Contact />}>
           <Route path="new" element={<ContactNew />} />
           <Route path="edit/:contactId" element={<ContactEdit />} />

@@ -10,6 +10,7 @@ const CurvePoint = () => {
   const { timestamp } = state ?? {};
   const [curvePoints, setCurvePoints] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     const getCurvePoints = async () => {
@@ -24,33 +25,61 @@ const CurvePoint = () => {
   }, [timestamp]);
 
   useEffect(() => {
-    if (selectedRowData) {
+    if (editMode && selectedRowData) {
       navigate(`/curve-points/edit/${selectedRowData.id}`);
     }
-  }, [selectedRowData]);
+  }, [selectedRowData, editMode, navigate]);
 
   const handleRowClick = (event) => {
-    setSelectedRowData(event.data);
+    if (editMode) {
+      setSelectedRowData(event.data);
+    }
   };
 
+  const columns = [
+    { field: "curve_description", headerName: "Curve ID" },
+    { field: "curve_name", headerName: "Curve Name" },
+    { field: "curve_desc", headerName: "Description" },
+    { field: "adate", headerName: "As-of Date" },
+    { field: "year", headerName: "Tenor (Years)" },
+    { field: "rate", headerName: "Rate (%)" },
+  ];
+
   return (
-    <>
-      <h1>Curve Points</h1>
-      <Link className="btn btn-primary" to="/curve-points/new">
+    <div className="container mt-4">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2>Curve Points</h2>
+        <div className="form-check form-switch">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id="editModeSwitch"
+            checked={editMode}
+            onChange={() => setEditMode(!editMode)}
+          />
+          <label className="form-check-label" htmlFor="editModeSwitch">
+            Edit Mode
+          </label>
+        </div>
+      </div>
+
+      <Link className="btn btn-primary mb-3" to="/curve-points/new">
         New
       </Link>
+
       <Outlet />
       {curvePoints.length === 0 ? (
         <p>No curve points defined yet</p>
       ) : (
         <DataTable
           data={curvePoints}
+          columns={columns}
           hiddenColumns={["id"]}
           width_pct={100}
           onRowClick={handleRowClick}
         />
       )}
-    </>
+    </div>
   );
 };
 

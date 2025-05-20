@@ -10,7 +10,10 @@ const Position = () => {
   const { timestamp } = state ?? {};
   const [positions, setPositions] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const hiddenColumns = ["id"];
 
   useEffect(() => {
     const loadPositions = async () => {
@@ -28,7 +31,7 @@ const Position = () => {
             frequency: sec.frequency || "",
             maturity: sec.maturity || "",
             currency: sec.currency || "",
-            discounted_price:risk_core.discounted_pv || "",
+            discounted_price: risk_core.discounted_pv || "",
           };
         });
 
@@ -44,10 +47,10 @@ const Position = () => {
   }, [timestamp]);
 
   useEffect(() => {
-    if (selectedRowData) {
+    if (editMode && selectedRowData) {
       navigate(`/positions/edit/${selectedRowData.id}`);
     }
-  }, [selectedRowData]);
+  }, [selectedRowData, editMode, navigate]);
 
   const columns = [
     { field: "portfolio_name", headerName: "Portfolio" },
@@ -70,10 +73,26 @@ const Position = () => {
 
   return (
     <div className="container mt-4">
-      <h2>Positions</h2>
+      <div className="d-flex justify-content-between align-items-center">
+        <h2>Positions</h2>
+        <div className="form-check form-switch">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id="editModeSwitch"
+            checked={editMode}
+            onChange={() => setEditMode(!editMode)}
+          />
+          <label className="form-check-label" htmlFor="editModeSwitch">
+            Edit Mode
+          </label>
+        </div>
+      </div>
+
       <Link className="btn btn-primary mb-3" to="/positions/new">
         Add New Position
       </Link>
+
       <Outlet />
       {loading ? (
         <p>Loading...</p>
@@ -83,9 +102,13 @@ const Position = () => {
         <DataTable
           data={positions}
           columns={columns}
-          hiddenColumns={["id"]}
+          hiddenColumns={hiddenColumns}
           width_pct={100}
-          onRowClick={(event) => setSelectedRowData(event.data)}
+          onRowClick={(event) => {
+            if (editMode) {
+              setSelectedRowData(event.data);
+            }
+          }}
         />
       )}
     </div>

@@ -10,6 +10,7 @@ const StressScenario = () => {
   const { timestamp } = state ?? {};
   const [scenarios, setScenarios] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     const getScenarios = async () => {
@@ -19,7 +20,6 @@ const StressScenario = () => {
         const flattened = data.map((item) => {
           const scenario = item.scenario_details || {};
           const shocks = item.curve_point_shocks || [];
-
           const firstShock = shocks[0] || {};
           const curve = firstShock.curve_point_details || {};
 
@@ -42,13 +42,15 @@ const StressScenario = () => {
   }, [timestamp]);
 
   useEffect(() => {
-    if (selectedRowData) {
+    if (editMode && selectedRowData) {
       navigate(`/stress-scenarios/edit/${selectedRowData.id}`);
     }
-  }, [selectedRowData]);
+  }, [selectedRowData, editMode, navigate]);
 
   const handleRowClick = (event) => {
-    setSelectedRowData(event.data);
+    if (editMode) {
+      setSelectedRowData(event.data);
+    }
   };
 
   const columnDefinitions = [
@@ -62,11 +64,27 @@ const StressScenario = () => {
   ];
 
   return (
-    <>
-      <h1>Stress Scenarios</h1>
+    <div className="container mt-4">
+      <div className="d-flex justify-content-between align-items-center">
+        <h1>Stress Scenarios</h1>
+        <div className="form-check form-switch">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id="editModeSwitch"
+            checked={editMode}
+            onChange={() => setEditMode(!editMode)}
+          />
+          <label className="form-check-label" htmlFor="editModeSwitch">
+            Edit Mode
+          </label>
+        </div>
+      </div>
+
       <Link className="btn btn-primary mb-3" to="/stress-scenarios/new">
         New
       </Link>
+
       <Outlet />
       {scenarios.length === 0 ? (
         <p>No stress scenarios defined yet</p>
@@ -79,7 +97,7 @@ const StressScenario = () => {
           onRowClick={handleRowClick}
         />
       )}
-    </>
+    </div>
   );
 };
 

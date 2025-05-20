@@ -9,6 +9,7 @@ const VanillaBond = () => {
   const navigate = useNavigate();
   const { state = {} } = useLocation();
   const { timestamp } = state ?? {};
+  const [editMode, setEditMode] = useState(false);
   const [bonds, setBonds] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
 
@@ -25,10 +26,10 @@ const VanillaBond = () => {
   }, [timestamp]);
 
   useEffect(() => {
-    if (selectedRowData) {
+    if (editMode && selectedRowData) {
       navigate(`/vanilla-bonds/edit/${selectedRowData.id}`);
     }
-  }, [selectedRowData]);
+  }, [selectedRowData, editMode, navigate]);
 
   const handleRowClick = (event) => {
     setSelectedRowData(event.data);
@@ -36,7 +37,21 @@ const VanillaBond = () => {
 
   return (
     <div className="container mt-4">
-      <h1>Vanilla Bond SecMaster</h1>
+      <div className="d-flex justify-content-between align-items-center">
+        <h2>Vanilla Bond SecMaster</h2>
+        <div className="form-check form-switch">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id="editModeSwitch"
+            checked={editMode}
+            onChange={() => setEditMode(!editMode)}
+          />
+          <label className="form-check-label" htmlFor="editModeSwitch">
+            Edit Mode
+          </label>
+        </div>
+      </div>
       <Link className="btn btn-primary mb-3" to="/vanilla-bonds/new">
         Add New Bond
       </Link>

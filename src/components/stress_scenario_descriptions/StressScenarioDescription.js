@@ -11,6 +11,7 @@ const StressScenarioDescription = () => {
   const { timestamp } = state ?? {};
   const [descriptions, setDescriptions] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     const getDescriptions = async () => {
@@ -28,18 +29,35 @@ const StressScenarioDescription = () => {
   }, [timestamp]);
 
   useEffect(() => {
-    if (selectedRowData) {
+    if (editMode && selectedRowData) {
       navigate(`/stress-scenario-descriptions/edit/${selectedRowData.id}`);
     }
-  }, [selectedRowData]);
+  }, [selectedRowData, editMode, navigate]);
 
   const handleRowClick = (event) => {
-    setSelectedRowData(event.data);
+    if (editMode) {
+      setSelectedRowData(event.data);
+    }
   };
 
   return (
     <div className="container mt-4">
-      <h2>Stress Scenario Descriptions</h2>
+      <div className="d-flex justify-content-between align-items-center">
+        <h2>Stress Scenario Descriptions</h2>
+        <div className="form-check form-switch">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id="editModeSwitch"
+            checked={editMode}
+            onChange={() => setEditMode(!editMode)}
+          />
+          <label className="form-check-label" htmlFor="editModeSwitch">
+            Edit Mode
+          </label>
+        </div>
+      </div>
+
       <Link className="btn btn-primary mb-3" to="/stress-scenario-descriptions/new">
         New
       </Link>

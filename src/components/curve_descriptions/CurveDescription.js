@@ -11,6 +11,7 @@ const CurveDescription = () => {
   const { timestamp } = state ?? {};
   const [curveDescriptions, setCurveDescriptions] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     const getDescriptions = async () => {
@@ -25,22 +26,41 @@ const CurveDescription = () => {
   }, [timestamp]);
 
   useEffect(() => {
-    if (selectedRowData) {
+    if (editMode && selectedRowData) {
       navigate(`/curve-descriptions/edit/${selectedRowData.id}`);
     }
-  }, [selectedRowData]);
+  }, [selectedRowData, editMode, navigate]);
 
   const handleRowClick = (event) => {
-    setSelectedRowData(event.data);
+    if (editMode) {
+      setSelectedRowData(event.data);
+    }
   };
 
   return (
-    <>
-      <h1>Curve Descriptions</h1>
-      <Link className="btn btn-primary" to="/curve-descriptions/new">
-        New
+    <div className="container mt-4">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2>Curve Descriptions</h2>
+        <div className="form-check form-switch">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id="editModeSwitch"
+            checked={editMode}
+            onChange={() => setEditMode(!editMode)}
+          />
+          <label className="form-check-label" htmlFor="editModeSwitch">
+            Edit Mode
+          </label>
+        </div>
+      </div>
+
+      <Link className="btn btn-primary mb-3" to="/curve-descriptions/new">
+        Add New Curve Description
       </Link>
+
       <Outlet />
+
       {curveDescriptions.length === 0 ? (
         <p>No curve descriptions found</p>
       ) : (
@@ -51,7 +71,7 @@ const CurveDescription = () => {
           onRowClick={handleRowClick}
         />
       )}
-    </>
+    </div>
   );
 };
 

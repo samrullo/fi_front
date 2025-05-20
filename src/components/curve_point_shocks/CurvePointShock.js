@@ -7,6 +7,7 @@ import { CURVE_POINT_SHOCKS_ENDPOINT } from "../ApiUtils/ApiEndpoints";
 const CurvePointShockList = () => {
   const [shocks, setShocks] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [editMode, setEditMode] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,10 +40,10 @@ const CurvePointShockList = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedRow) {
+    if (editMode && selectedRow) {
       navigate(`/curve-point-shocks/edit/${selectedRow.id}`);
     }
-  }, [selectedRow]);
+  }, [selectedRow, editMode, navigate]);
 
   const columnDefinitions = [
     { field: "scenario_name", headerName: "Scenario", width: 200 },
@@ -55,14 +56,30 @@ const CurvePointShockList = () => {
   ];
 
   return (
-    <div className="container-fluid">
-      <h2>Curve Point Shocks</h2>
+    <div className="container mt-4">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2>Curve Point Shocks</h2>
+        <div className="form-check form-switch">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id="editModeSwitch"
+            checked={editMode}
+            onChange={() => setEditMode(!editMode)}
+          />
+          <label className="form-check-label" htmlFor="editModeSwitch">
+            Edit Mode
+          </label>
+        </div>
+      </div>
+
       <button
         className="btn btn-primary mb-3"
         onClick={() => navigate("/curve-point-shocks/new")}
       >
         New Shock
       </button>
+
       <DataTable
         data={shocks}
         columns={columnDefinitions}
@@ -73,7 +90,11 @@ const CurvePointShockList = () => {
           "stress_scenario",
           "stress_scenario_details",
         ]}
-        onRowClick={(event) => setSelectedRow(event.data)}
+        onRowClick={(event) => {
+          if (editMode) {
+            setSelectedRow(event.data);
+          }
+        }}
         width_pct={100}
       />
     </div>

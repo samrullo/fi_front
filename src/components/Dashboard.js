@@ -78,7 +78,7 @@ const Dashboard = () => {
 
       {/* Yield Curve Data */}
       <div className="mb-5">
-        <h2>Yield Curve Data</h2>
+        <h2>Curve Data</h2>
         <div className="list-group">
           <Link to="/curve-descriptions" className="list-group-item">
             Manage Curve Descriptions
@@ -113,7 +113,7 @@ const Dashboard = () => {
 
       {/* Stress Testing */}
       <div className="mb-5">
-        <h2>Stress Testing</h2>
+        <h2>Stress Scenarios</h2>
         <div className="list-group">
           <Link to="/stress-scenario-descriptions" className="list-group-item">
             Stress Scenario Descriptions

@@ -41,6 +41,9 @@ const Dashboard = () => {
           <Link to="/scenario-positions/generate" className="list-group-item">
             Generate Scenario Positions from Portfolio
           </Link>
+          <Link to="/scenario-positions/by_portfolio_and_date" className="list-group-item">
+            Filter Scenario Positions by Portfolio and Date
+          </Link>
         </div>
       </div>
 

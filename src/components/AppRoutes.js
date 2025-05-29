@@ -56,7 +56,7 @@ import ScenarioPositionNew from "./scenario_positions/ScenarioPositionNew";
 import ScenarioPositionEdit from "./scenario_positions/ScenarioPositionEdit";
 import GenerateScenarioPositionsForm from "./scenario_positions/GenerateScenarioPositionsForm";
 import PortfolioStressTrend from "./scenario_positions/PortfolioStressTrend";
-
+import ScenarioPositionsByPortfolioNameAndPositionDate from "./scenario_positions/ScenarioPositionsByPortfolioNameAndPositionDate";
 
 const AppRoutes = () => {
   return (
@@ -80,9 +80,10 @@ const AppRoutes = () => {
         <Route path="/upload-positions" element={<UploadPositionsCSV />} />
         <Route path="/scenario-positions" element={<ScenarioPosition />}>
           <Route path="new" element={<ScenarioPositionNew />} />
-          <Route path="edit/:scenarioPositionId" element={<ScenarioPositionEdit />} />
+          <Route path="edit/:scenarioPositionId" element={<ScenarioPositionEdit />} />          
         </Route>
         <Route path="/scenario-positions/generate" element={<GenerateScenarioPositionsForm />} />
+        <Route path="/scenario-positions/by_portfolio_and_date" element={<ScenarioPositionsByPortfolioNameAndPositionDate />} />
 
         <Route path="/risk-cores" element={<RiskCore />}>
           <Route path="new" element={<RiskCoreNew />} />
